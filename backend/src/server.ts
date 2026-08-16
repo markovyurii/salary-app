@@ -55,7 +55,7 @@ app.post('/api/work-log', async (req: Request, res: Response) => {
         addon_eth: addon_eth || 0,
         reconnect: reconnect || 0,
         extra_hours: extra_hours || 0,
-        duty: duty || 0,
+        duty: duty_hours || 0,
         brought_clients: brought_clients || 0,
         connect_uo: connect_uo || 0
       }, { onConflict: 'date' }) 

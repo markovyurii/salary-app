@@ -9,7 +9,7 @@ function App() {
     earned_from_work: 0,
     total_salary_prognosis: 19200,
   });
- 
+
   const [workLog, setWorkLog] = useState({
     connect_tv: 0,
     connect_no_tv: 0,
