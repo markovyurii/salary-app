@@ -308,15 +308,15 @@ function App() {
           <h3 className="text-md font-bold text-slate-200 uppercase tracking-wide border-b border-slate-700/50 pb-2 flex justify-between items-center">
             <span>📋 Детальний звіт за місяць</span>
             <span className="text-xs bg-slate-900 text-emerald-400 font-bold px-2.5 py-1 rounded-md border border-emerald-500/10">
-              днів: {historyList.length}
+              днів: {historyList?.length}
             </span>
           </h3>
 
-          {historyList.length === 0 ? (
+          {historyList?.length === 0 ? (
             <p className="text-center text-xs text-slate-500 py-4">Записів за цей місяць ще немає...</p>
           ) : (
             <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
-              {historyList.map((day) => {
+              {historyList?.map((day) => {
                 const daySum = calculateDaySum(day);
                 return (
                   <div key={day.date} className="bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/40 text-xs space-y-2">
@@ -349,10 +349,7 @@ function App() {
               })}
             </div>
           )}
-        </div>git add .
-git commit -m "fix: restore flawless report template layout structures"
-git push origin main
-
+        </div>
       </main>
     </div>
   );
