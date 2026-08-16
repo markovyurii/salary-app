@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 function App() {
   const BONUS_OPTIONS = [0, 5, 10, 15];
-  const [salary, setSalary] = useState<number>(19200);
+  const [salary] = useState<number>(19200);
   const [bonusPercent, setBonusPercent] = useState<number>(0);
   const [dbCalculations, setDbCalculations] = useState({
     base_salary: 19200,
@@ -63,8 +63,6 @@ function App() {
     workLog.brought_clients * RATES.BROUGHT_CLIENT +
     workLog.connect_uo * RATES.CONNECT_UO;
 
-  const bonusMoney = (salary * bonusPercent) / 100;
-  const totalSalaryPrognosis = salary + bonusMoney + earnedFromWork;
   const handleCounterChange = (
     field: string,
     operation: 'inc' | 'dec',
