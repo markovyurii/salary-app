@@ -58,12 +58,16 @@ function App() {
 
   const fetchHistoryFromBackend = async () => {
     try {
-      const response = await fetch(`https://salary-backend-woq5.onrender.com/api/salary`);
+      const response = await fetch(`https://onrender.com`);
       if (!response.ok) throw new Error('Не вдалося завантажити звіт');
+      
       const data = await response.json();
-      setHistoryList(data.history);
+      
+      // 🌟 НАДВАЖЛИВИЙ ФІКС: якщо з сервера прийшло undefined/null, ставимо порожній масив []
+      setHistoryList(data.history || []);
     } catch (error: any) {
       console.error('Помилка завантаження історії:', error);
+      setHistoryList([]); // У разі помилки мережі теж ставимо порожній масив, щоб сайт не виснув
     }
   };
 
@@ -304,19 +308,21 @@ function App() {
             Зберегти в базу даних
           </button>
         </div>
+               {/* 📋 ДЕТАЛЬНИЙ ЗВІТ / ІСТОРІЯ ПО ДНЯХ РОБОТИ */}
         <div className="bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700/50 space-y-4">
           <h3 className="text-md font-bold text-slate-200 uppercase tracking-wide border-b border-slate-700/50 pb-2 flex justify-between items-center">
             <span>📋 Детальний звіт за місяць</span>
             <span className="text-xs bg-slate-900 text-emerald-400 font-bold px-2.5 py-1 rounded-md border border-emerald-500/10">
-              днів: {historyList?.length}
+              днів: {historyList ? historyList.length : 0}
             </span>
           </h3>
 
-          {historyList?.length === 0 ? (
+          {/* 🌟 РОЗУМНА ПЕРЕВІРКА: якщо масиву немає або він порожній, показуємо заглушку */}
+          {!historyList || historyList.length === 0 ? (
             <p className="text-center text-xs text-slate-500 py-4">Записів за цей місяць ще немає...</p>
           ) : (
             <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
-              {historyList?.map((day) => {
+              {historyList.map((day) => {
                 const daySum = calculateDaySum(day);
                 return (
                   <div key={day.date} className="bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/40 text-xs space-y-2">
@@ -350,6 +356,7 @@ function App() {
             </div>
           )}
         </div>
+
       </main>
     </div>
   );
