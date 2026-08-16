@@ -9,17 +9,7 @@ function App() {
     earned_from_work: 0,
     total_salary_prognosis: 19200,
   });
-  const RATES = {
-    CONNECT_TV: 150,
-    CONNECT_NO_TV: 100,
-    ADDON_PON: 100,
-    ADDON_ETH: 75,
-    RECONNECT: 80,
-    EXTRA_HOUR: 100,
-    DUTY_HOUR: 120,
-    BROUGHT_CLIENT: 150,
-    CONNECT_UO: 180,
-  };
+ 
   const [workLog, setWorkLog] = useState({
     connect_tv: 0,
     connect_no_tv: 0,
