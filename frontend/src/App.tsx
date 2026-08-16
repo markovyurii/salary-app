@@ -58,7 +58,7 @@ function App() {
 
   const fetchHistoryFromBackend = async () => {
     try {
-      const response = await fetch(`https://onrender.com`);
+      const response = await fetch(`https://salary-backend-woq5.onrender.com/api/salary`);
       if (!response.ok) throw new Error('Не вдалося завантажити звіт');
       
       const data = await response.json();
