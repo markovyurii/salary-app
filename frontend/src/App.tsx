@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 
 function App() {
   const BONUS_OPTIONS = [0, 5, 10, 15];
-  const [salary] = useState<number>(19200);
   const [bonusPercent, setBonusPercent] = useState<number>(0);
   const [dbCalculations, setDbCalculations] = useState({
     base_salary: 19200,
@@ -51,17 +50,6 @@ function App() {
   useEffect(() => {
     fetchSalaryFromBackend();
   }, [bonusPercent]);
-
-  const earnedFromWork =
-    workLog.connect_tv * RATES.CONNECT_TV +
-    workLog.connect_no_tv * RATES.CONNECT_NO_TV +
-    workLog.addon_pon * RATES.ADDON_PON +
-    workLog.addon_eth * RATES.ADDON_ETH +
-    workLog.reconnect * RATES.RECONNECT +
-    workLog.extra_hours * RATES.EXTRA_HOUR +
-    workLog.duty_hours * RATES.DUTY_HOUR +
-    workLog.brought_clients * RATES.BROUGHT_CLIENT +
-    workLog.connect_uo * RATES.CONNECT_UO;
 
   const handleCounterChange = (
     field: string,
