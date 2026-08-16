@@ -31,6 +31,7 @@ app.get('/', (req: Request, res: Response) => {
 // 🚀 МАРШРУТ ЗАПИСУ ДАНИХ (POST) - Тепер чітко приймає duty_hours з React
 app.post('/api/work-log', async (req: Request, res: Response) => {
   try {
+    console.log('👉 НА БЕКЕНД ПРИЙШЛИ ТАКІ ДАНІ З ФОРМИ:', req.body);
     const { 
       date, 
       connect_tv, 
