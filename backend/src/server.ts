@@ -67,13 +67,19 @@ app.get('/api/work-log', async (req: Request, res: Response) => {
   try {
     const now = new Date();
     const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const currentMonthPattern = `${year}-${month}-%`;
+    const month = now.getMonth(); // Серпень = 7
 
+    // Формуємо чисті ISO дати початку й кінця місяця
+    const firstDay = `${year}-${String(month + 1).padStart(2, '0')}-01`;
+    const lastDayDate = new Date(year, month + 1, 0).getDate();
+    const lastDay = `${year}-${String(month + 1).padStart(2, '0')}-${lastDayDate}`;
+
+    // Замість розмитого .like використовуємо чітке порівняння дат, сумісне з типом Date!
     const { data: history, error } = await supabase
       .from('daily_work_log')
       .select('*')
-      .like('date', currentMonthPattern)
+      .gte('date', firstDay)
+      .lte('date', lastDay)
       .order('date', { ascending: false });
 
     if (error) throw error;
@@ -83,7 +89,6 @@ app.get('/api/work-log', async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Не вдалося завантажити історію', details: error.message });
   }
 });
-
 // 📊 3. МАРШРУТ РОЗРАХУНКУ ЗАГАЛЬНОЇ ЗП ЗА МІСЯЦЬ (GET)
 app.get('/api/salary', async (req: Request, res: Response) => {
   try {
