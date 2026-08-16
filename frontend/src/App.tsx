@@ -15,9 +15,16 @@ interface WorkDay {
 
 function App() {
   const BONUS_OPTIONS = [0, 5, 10, 15];
-    const DAY_RATES = {
-    CONNECT_TV: 150, CONNECT_NO_TV: 100, ADDON_PON: 100, ADDON_ETH: 75,
-    RECONNECT: 80, EXTRA_HOUR: 100, DUTY_HOUR: 120, BROUGHT_CLIENT: 150, CONNECT_UO: 180
+  const DAY_RATES = {
+    CONNECT_TV: 150,
+    CONNECT_NO_TV: 100,
+    ADDON_PON: 100,
+    ADDON_ETH: 75,
+    RECONNECT: 80,
+    EXTRA_HOUR: 100,
+    DUTY_HOUR: 120,
+    BROUGHT_CLIENT: 150,
+    CONNECT_UO: 180,
   };
   const [bonusPercent, setBonusPercent] = useState<number>(0);
   const [dbCalculations, setDbCalculations] = useState({
@@ -27,7 +34,7 @@ function App() {
     total_salary_prognosis: 19200,
   });
 
-   const [historyList, setHistoryList] = useState<WorkDay[]>([]);
+  const [historyList, setHistoryList] = useState<WorkDay[]>([]);
 
   const [workLog, setWorkLog] = useState({
     connect_tv: 0,
@@ -58,11 +65,13 @@ function App() {
 
   const fetchHistoryFromBackend = async () => {
     try {
-      const response = await fetch(`https://salary-backend-woq5.onrender.com/api/salary`);
+      const response = await fetch(
+        `https://salary-backend-woq5.onrender.com/api/salary`,
+      );
       if (!response.ok) throw new Error('Не вдалося завантажити звіт');
-      
+
       const data = await response.json();
-      
+      console.log('🍏 СЕРВЕР ПОВЕРНУВ ТАКИЙ МАСИВ ІСТОРІЇ:', data);
       // 🌟 НАДВАЖЛИВИЙ ФІКС: якщо з сервера прийшло undefined/null, ставимо порожній масив []
       setHistoryList(data.history || []);
     } catch (error: any) {
@@ -96,13 +105,16 @@ function App() {
   };
   const saveDataToServer = async () => {
     try {
-      const response = await fetch('https://salary-backend-woq5.onrender.com/api/work-log', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        'https://salary-backend-woq5.onrender.com/api/work-log',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(workLog),
         },
-        body: JSON.stringify(workLog),
-      });
+      );
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.error || 'Щось пішло не так при збереженні');
@@ -129,20 +141,24 @@ function App() {
 
   const formatUkDate = (dateStr: string) => {
     const d = new Date(dateStr);
-    return d.toLocaleDateString('uk-UA', { day: 'numeric', month: 'short', weekday: 'short' });
+    return d.toLocaleDateString('uk-UA', {
+      day: 'numeric',
+      month: 'short',
+      weekday: 'short',
+    });
   };
 
-   const calculateDaySum = (day: WorkDay) => {
+  const calculateDaySum = (day: WorkDay) => {
     return (
-      (day.connect_tv * DAY_RATES.CONNECT_TV) +
-      (day.connect_no_tv * DAY_RATES.CONNECT_NO_TV) +
-      (day.addon_pon * DAY_RATES.ADDON_PON) +
-      (day.addon_eth * DAY_RATES.ADDON_ETH) +
-      (day.reconnect * DAY_RATES.RECONNECT) +
-      (day.extra_hours * DAY_RATES.EXTRA_HOUR) +
-      (day.duty * DAY_RATES.DUTY_HOUR) +
-      (day.brought_clients * DAY_RATES.BROUGHT_CLIENT) +
-      (day.connect_uo * DAY_RATES.CONNECT_UO)
+      day.connect_tv * DAY_RATES.CONNECT_TV +
+      day.connect_no_tv * DAY_RATES.CONNECT_NO_TV +
+      day.addon_pon * DAY_RATES.ADDON_PON +
+      day.addon_eth * DAY_RATES.ADDON_ETH +
+      day.reconnect * DAY_RATES.RECONNECT +
+      day.extra_hours * DAY_RATES.EXTRA_HOUR +
+      day.duty * DAY_RATES.DUTY_HOUR +
+      day.brought_clients * DAY_RATES.BROUGHT_CLIENT +
+      day.connect_uo * DAY_RATES.CONNECT_UO
     );
   };
 
@@ -308,7 +324,7 @@ function App() {
             Зберегти в базу даних
           </button>
         </div>
-               {/* 📋 ДЕТАЛЬНИЙ ЗВІТ / ІСТОРІЯ ПО ДНЯХ РОБОТИ */}
+        {/* 📋 ДЕТАЛЬНИЙ ЗВІТ / ІСТОРІЯ ПО ДНЯХ РОБОТИ */}
         <div className="bg-slate-800 p-6 rounded-2xl shadow-xl border border-slate-700/50 space-y-4">
           <h3 className="text-md font-bold text-slate-200 uppercase tracking-wide border-b border-slate-700/50 pb-2 flex justify-between items-center">
             <span>📋 Детальний звіт за місяць</span>
@@ -319,14 +335,18 @@ function App() {
 
           {/* 🌟 РОЗУМНА ПЕРЕВІРКА: якщо масиву немає або він порожній, показуємо заглушку */}
           {!historyList || historyList.length === 0 ? (
-            <p className="text-center text-xs text-slate-500 py-4">Записів за цей місяць ще немає...</p>
+            <p className="text-center text-xs text-slate-500 py-4">
+              Записів за цей місяць ще немає...
+            </p>
           ) : (
             <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
               {historyList.map((day) => {
                 const daySum = calculateDaySum(day);
                 return (
-                  <div key={day.date} className="bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/40 text-xs space-y-2">
-                    
+                  <div
+                    key={day.date}
+                    className="bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/40 text-xs space-y-2"
+                  >
                     {/* Шапка дня: Дата + Зароблена сума за цей день */}
                     <div className="flex justify-between items-center border-b border-slate-800 pb-1.5">
                       <span className="font-black text-slate-200 uppercase tracking-tight text-[11px]">
@@ -336,27 +356,74 @@ function App() {
                         +{daySum.toLocaleString('uk-UA')} грн
                       </span>
                     </div>
-                    
+
                     {/* Детальний список виконаної роботи */}
                     <div className="grid grid-cols-2 gap-x-2 gap-y-1 text-[11px] text-slate-400">
-                      {day.connect_tv > 0 && <div className="flex justify-between"><span>📺 ТВ підключення:</span> <b className="text-slate-200">{day.connect_tv}</b></div>}
-                      {day.connect_no_tv > 0 && <div className="flex justify-between"><span>🌐 Інтернет підкл:</span> <b className="text-slate-200">{day.connect_no_tv}</b></div>}
-                      {day.addon_pon > 0 && <div className="flex justify-between"><span>🌀 Допідкл ПОН:</span> <b className="text-slate-200">{day.addon_pon}</b></div>}
-                      {day.addon_eth > 0 && <div className="flex justify-between"><span>🔌 Допідкл Етх:</span> <b className="text-slate-200">{day.addon_eth}</b></div>}
-                      {day.reconnect > 0 && <div className="flex justify-between"><span>🔄 Переключення:</span> <b className="text-slate-200">{day.reconnect}</b></div>}
-                      {day.extra_hours > 0 && <div className="flex justify-between"><span>⏱️ Додаткові години:</span> <b className="text-slate-200">{day.extra_hours} год</b></div>}
-                      {day.duty > 0 && <div className="flex justify-between"><span>🛡️ Чергування:</span> <b className="text-slate-200">{day.duty} год</b></div>}
-                      {day.brought_clients > 0 && <div className="flex justify-between"><span>🤝 Приведені клієнти:</span> <b className="text-slate-200">{day.brought_clients}</b></div>}
-                      {day.connect_uo > 0 && <div className="flex justify-between"><span>🏢 Підключення ЮО:</span> <b className="text-slate-200">{day.connect_uo}</b></div>}
+                      {day.connect_tv > 0 && (
+                        <div className="flex justify-between">
+                          <span>📺 ТВ підключення:</span>{' '}
+                          <b className="text-slate-200">{day.connect_tv}</b>
+                        </div>
+                      )}
+                      {day.connect_no_tv > 0 && (
+                        <div className="flex justify-between">
+                          <span>🌐 Інтернет підкл:</span>{' '}
+                          <b className="text-slate-200">{day.connect_no_tv}</b>
+                        </div>
+                      )}
+                      {day.addon_pon > 0 && (
+                        <div className="flex justify-between">
+                          <span>🌀 Допідкл ПОН:</span>{' '}
+                          <b className="text-slate-200">{day.addon_pon}</b>
+                        </div>
+                      )}
+                      {day.addon_eth > 0 && (
+                        <div className="flex justify-between">
+                          <span>🔌 Допідкл Етх:</span>{' '}
+                          <b className="text-slate-200">{day.addon_eth}</b>
+                        </div>
+                      )}
+                      {day.reconnect > 0 && (
+                        <div className="flex justify-between">
+                          <span>🔄 Переключення:</span>{' '}
+                          <b className="text-slate-200">{day.reconnect}</b>
+                        </div>
+                      )}
+                      {day.extra_hours > 0 && (
+                        <div className="flex justify-between">
+                          <span>⏱️ Додаткові години:</span>{' '}
+                          <b className="text-slate-200">
+                            {day.extra_hours} год
+                          </b>
+                        </div>
+                      )}
+                      {day.duty > 0 && (
+                        <div className="flex justify-between">
+                          <span>🛡️ Чергування:</span>{' '}
+                          <b className="text-slate-200">{day.duty} год</b>
+                        </div>
+                      )}
+                      {day.brought_clients > 0 && (
+                        <div className="flex justify-between">
+                          <span>🤝 Приведені клієнти:</span>{' '}
+                          <b className="text-slate-200">
+                            {day.brought_clients}
+                          </b>
+                        </div>
+                      )}
+                      {day.connect_uo > 0 && (
+                        <div className="flex justify-between">
+                          <span>🏢 Підключення ЮО:</span>{' '}
+                          <b className="text-slate-200">{day.connect_uo}</b>
+                        </div>
+                      )}
                     </div>
-
                   </div>
                 );
               })}
             </div>
           )}
         </div>
-
       </main>
     </div>
   );
