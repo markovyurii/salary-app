@@ -2,7 +2,6 @@ import express, { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { supabase } from './supabase';
-import console = require('node:console');
 
 dotenv.config();
 
@@ -29,6 +28,7 @@ app.get('/', (req: Request, res: Response) => {
   res.send('Сервер калькулятора ЗП успішно зʼєднано з PostgreSQL!');
 });
 
+// 🚀 МАРШРУТ ЗАПИСУ ДАНИХ (POST) - Тепер чітко приймає duty_hours з React
 app.post('/api/work-log', async (req: Request, res: Response) => {
   try {
     const { 
@@ -39,11 +39,14 @@ app.post('/api/work-log', async (req: Request, res: Response) => {
       addon_eth, 
       reconnect, 
       extra_hours, 
-      duty, 
+      duty_hours, // <--- Виправили назву: тепер чітко ловимо duty_hours з React-форми
       brought_clients, 
       connect_uo 
     } = req.body;
-    if (!date) { return res.status(400).json({ error: 'Поле date є обовʼязковим (РРРР-ММ-ДД)!' }); }
+
+    if (!date) { 
+      return res.status(400).json({ error: 'Поле date є обовʼязковим!' }); 
+    }
 
     const { data, error } = await supabase
       .from('daily_work_log') 
@@ -55,14 +58,13 @@ app.post('/api/work-log', async (req: Request, res: Response) => {
         addon_eth: addon_eth || 0,
         reconnect: reconnect || 0,
         extra_hours: extra_hours || 0,
-        duty: duty_hours || 0,
+        duty: duty_hours || 0, // <--- Записуємо значення у колонку duty в базі Supabase
         brought_clients: brought_clients || 0,
         connect_uo: connect_uo || 0
       }, { onConflict: 'date' }) 
       .select(); 
-    if (error) {
-      throw error;
-    }
+
+    if (error) throw error;
 
     return res.status(200).json({
       message: 'Дані успішно збережено в PostgreSQL хмарі!',
@@ -75,28 +77,33 @@ app.post('/api/work-log', async (req: Request, res: Response) => {
   }
 });
 
-app.get('/api/salary', async(req:Request, res:Response) => {
-  try{
-    const bonusQuery= req.query.bonus; 
+// 📊 МАРШРУТ РОЗРАХУНКУ ЗП ЗА МІСЯЦЬ (GET)
+app.get('/api/salary', async (req: Request, res: Response) => {
+  try {
+    const bonusQuery = req.query.bonus; 
     let bonusPercent = bonusQuery ? Number(bonusQuery) : 0;
-    if (bonusPercent < 0 || bonusPercent > 15 ) {
+    
+    if (bonusPercent < 0 || bonusPercent > 15) {
       return res.status(400).json({ error: 'Відсоток премії має бути в межах від 0 до 15%' });
     }
+
     const now = new Date();
     const year = now.getFullYear();
     const month = now.getMonth();
+    
     const firstDay = `${year}-${String(month + 1).padStart(2, '0')}-01`;
     const lastDayDate = new Date(year, month + 1, 0).getDate();
     const lastDay = `${year}-${String(month + 1).padStart(2, '0')}-${lastDayDate}`;
-     console.log(`Шукаємо логи в діапазоні від ${firstDay} до ${lastDay}`);
 
-   const { data: logs, error } = await supabase
-  .from('daily_work_log')
-  .select('*')
-  .gte('date', firstDay)
-  .lte('date', lastDay);
+    console.log(`Шукаємо логи в діапазоні від ${firstDay} до ${lastDay}`);
 
-       if (error) throw error;
+    const { data: logs, error } = await supabase
+      .from('daily_work_log')
+      .select('*')
+      .gte('date', firstDay)
+      .lte('date', lastDay);
+
+    if (error) throw error;
 
     let totalTv = 0; let totalNoTv = 0; let totalPon = 0; let totalEth = 0;
     let totalReconnect = 0; let totalExtraHours = 0; let totalDuties = 0;
@@ -115,7 +122,8 @@ app.get('/api/salary', async(req:Request, res:Response) => {
         totalConnectUo += log.connect_uo || 0;
       });
     }
-     const earnedFromWork = 
+
+    const earnedFromWork = 
       (totalTv * RATES.CONNECT_TV) +
       (totalNoTv * RATES.CONNECT_NO_TV) +
       (totalPon * RATES.ADDON_PON) +
@@ -126,9 +134,10 @@ app.get('/api/salary', async(req:Request, res:Response) => {
       (totalBroughtClients * RATES.BROUGHT_CLIENT_RATE) +
       (totalConnectUo * RATES.CONNECT_UO_RATE);
 
-      const bonusMoney = (RATES.BASE_SALARY * bonusPercent) / 100;
+    const bonusMoney = (RATES.BASE_SALARY * bonusPercent) / 100;
+    const totalSalary = RATES.BASE_SALARY + bonusMoney + earnedFromWork; 
 
-     const totalSalary = RATES.BASE_SALARY + bonusMoney + earnedFromWork; return res.status(200).json({
+    return res.status(200).json({
       month: `${year}-${String(month + 1).padStart(2, '0')}`,
       metrics: {
         connect_tv: totalTv,
@@ -154,6 +163,7 @@ app.get('/api/salary', async(req:Request, res:Response) => {
     return res.status(500).json({ error: 'Не вдалося порахувати ЗП', details: error.message });
   }
 });
+
 app.listen(PORT, () => {
-  console.log(`🚀 Сервер працює на http://localhost:${PORT}`);
+  console.log(`🚀 Сервер працює на порту ${PORT}`);
 });
