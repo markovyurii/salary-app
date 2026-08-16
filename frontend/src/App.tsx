@@ -37,7 +37,7 @@ function App() {
   const fetchSalaryFromBackend = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/salary?bonus=${bonusPercent}`,
+        `https://salary-backend-woq5.onrender.com${bonusPercent}`,
       );
       if (!response.ok)
         throw new Error('Не вдалося завантажити дані з сервера');
@@ -85,7 +85,7 @@ function App() {
   };
   const saveDataToServer = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/work-log', {
+      const response = await fetch('https://salary-backend-woq5.onrender.com', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
