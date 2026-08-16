@@ -26,7 +26,7 @@ function App() {
   const fetchSalaryFromBackend = async () => {
     try {
       const response = await fetch(
-        `https://salary-backend-woq5.onrender.com/api/daily_work_log`,
+        `https://salary-backend-woq5.onrender.com/api/salary`,
       );
       if (!response.ok)
         throw new Error('Не вдалося завантажити дані з сервера');
