@@ -157,15 +157,15 @@ function App() {
 
   const calculateDaySum = (day: WorkDay) => {
     return (
-      day.connect_tv * DAY_RATES.CONNECT_TV +
-      day.connect_no_tv * DAY_RATES.CONNECT_NO_TV +
-      day.addon_pon * DAY_RATES.ADDON_PON +
-      day.addon_eth * DAY_RATES.ADDON_ETH +
-      day.reconnect * DAY_RATES.RECONNECT +
-      day.extra_hours * DAY_RATES.EXTRA_HOUR +
-      day.duty * DAY_RATES.DUTY_HOUR +
-      day.brought_clients * DAY_RATES.BROUGHT_CLIENT +
-      day.connect_uo * DAY_RATES.CONNECT_UO
+      (day?.connect_tv || 0) * DAY_RATES.CONNECT_TV +
+      (day?.connect_no_tv || 0) * DAY_RATES.CONNECT_NO_TV +
+      (day?.addon_pon || 0) * DAY_RATES.ADDON_PON +
+      (day?.addon_eth || 0) * DAY_RATES.ADDON_ETH +
+      (day?.reconnect || 0) * DAY_RATES.RECONNECT +
+      (day?.extra_hours || 0) * DAY_RATES.EXTRA_HOUR +
+      (day?.duty || 0) * DAY_RATES.DUTY_HOUR +
+      (day?.brought_clients || 0) * DAY_RATES.BROUGHT_CLIENT +
+      (day?.connect_uo || 0) * DAY_RATES.CONNECT_UO
     );
   };
 
@@ -311,7 +311,7 @@ function App() {
                             📅 {formatUkDate(day.date)}
                           </span>
                           <span className="bg-emerald-500/10 text-emerald-400 font-black px-2 py-0.5 rounded border border-emerald-500/10">
-                            +{daySum.toLocaleString('uk-UA')} грн
+                            +{daySum ? daySum.toLocaleString('uk-UA') : '0'} грн
                           </span>
                         </div>
                         <div className="grid grid-cols-2 gap-x-2 gap-y-0.5 text-[11px] text-slate-400">
@@ -378,7 +378,12 @@ function App() {
                           {day.tips > 0 && (
                             <div className="flex justify-between text-amber-400 font-semibold">
                               <span>💵 Чайові клієнта:</span>{' '}
-                              <b>+{day.tips} грн</b>
+                              {day?.tips > 0 && (
+                                <div className="flex justify-between text-amber-400 font-semibold">
+                                  <span>💵 Чайові клієнта:</span>{' '}
+                                  <b>+{day.tips || 0} грн</b>
+                                </div>
+                              )}
                             </div>
                           )}
                         </div>
