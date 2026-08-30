@@ -4,12 +4,12 @@ interface SettingsProps {
   updateBaseSalaryInDb: () => void;
   cardPaymentInput: string;
   setCardPaymentInput: (v: string) => void;
-  saveCardPaymentToDb: () => void;
+  saveCardPayment: () => void;
 }
 
 export function SettingsTab({
   salaryInput, setSalaryInput, updateBaseSalaryInDb,
-  cardPaymentInput, setCardPaymentInput, saveCardPaymentToDb
+  cardPaymentInput, setCardPaymentInput, saveCardPayment
 }: SettingsProps) {
   return (
     <div className="space-y-4 animate-[fadeIn_0.15s_ease-out]">
@@ -35,7 +35,7 @@ export function SettingsTab({
           />
           <button 
             type="button"
-            onClick={saveCardPaymentToDb}
+            onClick={saveCardPayment}
             className="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black px-4 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-95 cursor-pointer"
           >
             Внести

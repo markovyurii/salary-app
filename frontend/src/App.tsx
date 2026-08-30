@@ -83,12 +83,6 @@ function AppContent() {
                         calculations={dbCalculations}
                         bonus={bonusPercent}
                         setBonus={setBonusPercent}
-                        salaryInput={salaryInput}
-                        setSalaryInput={setSalaryInput}
-                        updateBaseSalaryInDb={updateBaseSalaryInDb}
-                        cardPaymentInput={cardPaymentInput}
-                        setCardPaymentInput={setCardPaymentInput}
-                        saveCardPayment={saveCardPayment}
                       />
                     }
                   />
@@ -122,7 +116,7 @@ function AppContent() {
                         updateBaseSalaryInDb={updateBaseSalaryInDb}
                         cardPaymentInput={cardPaymentInput}
                         setCardPaymentInput={setCardPaymentInput}
-                        saveCardPaymentToDb={saveCardPaymentToDb}
+                        saveCardPayment={saveCardPayment}
                       />
                     }
                   />
