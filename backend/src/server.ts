@@ -148,13 +148,13 @@ app.get('/api/salary', requireAuth, async (req: AuthenticatedRequest, res: Respo
       .single();
 
     const userBaseSalary = profile ? Number(profile.base_salary) : 19200;
-    const { data: logs } = await supabase.from('daily_work_log').select('*').gte('date', firstDay).lte('date', lastDay).eq('user_id', req.userId);
+    const { data: logs, error: logsError } = await supabase.from('daily_work_log').select('*').gte('date', firstDay).lte('date', lastDay).eq('user_id', req.userId);
 
-    if (error) throw error;
+    if (logsError) throw logsError;
 
     let totalTv = 0; let totalNoTv = 0; let totalPon = 0; let totalEth = 0;
     let totalReconnect = 0; let totalExtraHours = 0; let totalDuties = 0;
-    let totalBroughtClients = 0; let totalConnectUo = 0;
+    let totalBroughtClients = 0; let totalConnectUo = 0; let totalTips = 0;
 
     if (logs) {
       logs.forEach(log => {
@@ -187,7 +187,7 @@ app.get('/api/salary', requireAuth, async (req: AuthenticatedRequest, res: Respo
 
     return res.status(200).json({
       calculations: {
-        base_salary: RATES.BASE_SALARY,
+        base_salary: userBaseSalary,
         bonus_percent_applied: `${bonusPercent}%`,
         bonus_calculated_uah: bonusMoney,
         earned_from_work: earnedFromWork,
