@@ -44,7 +44,8 @@ function AppContent() {
   } = useSalary();
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-slate-100 flex flex-col items-center px-4 antialiased selection:bg-emerald-500/20">
+    /* 🌟 ФІКС №2: Додали pb-28, щоб нижній контент більше ніколи не ховався під меню навігації! */
+    <div className="min-h-screen bg-[#0f172a] text-slate-100 flex flex-col items-center px-4 pb-28 antialiased selection:bg-emerald-500/20">
       <Routes>
         {/* 🔒 СЦЕНАРІЙ А: КОРИСТУВАЧ НЕ АВТОРИЗОВАНИЙ */}
         {!userToken ? (
@@ -116,7 +117,7 @@ function AppContent() {
                         updateBaseSalaryInDb={updateBaseSalaryInDb}
                         cardPaymentInput={cardPaymentInput}
                         setCardPaymentInput={setCardPaymentInput}
-                        saveCardPayment={saveCardPayment}
+                        saveCardPaymentToDb={saveCardPayment} // 🌟 ФІКС №3: Передаємо правильну пропсу в налаштування!
                       />
                     }
                   />
