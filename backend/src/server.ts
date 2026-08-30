@@ -68,7 +68,7 @@ app.post('/api/work-log', requireAuth, async (req: AuthenticatedRequest, res: Re
   try {
     const { 
       date, connect_tv, connect_no_tv, addon_pon, addon_eth, 
-      reconnect, extra_hours, duty_hours, brought_clients, connect_uo 
+      reconnect, extra_hours, duty_hours, brought_clients, connect_uo,tips 
     } = req.body;
 
     if (!date) return res.status(400).json({ error: 'Поле date є обовʼязковим!' });
@@ -88,7 +88,7 @@ app.post('/api/work-log', requireAuth, async (req: AuthenticatedRequest, res: Re
         connect_uo: connect_uo || 0,
         tips: Number(tips) || 0,
         user_id: req.userId
-      }, { onConflict: 'date' })
+      }, { onConflict: 'date,user_id' })
       .select();
 
     if (error) throw error;
@@ -112,15 +112,15 @@ app.get('/api/work-log', requireAuth, async (req: AuthenticatedRequest, res: Res
     const lastDay = `${year}-${String(month + 1).padStart(2, '0')}-${lastDayDate}`;
 
     // Замість розмитого .like використовуємо чітке порівняння дат, сумісне з типом Date!
-    const { data: history, error } = await supabase
+    const { data: history, error: historyError } = await supabase
       .from('daily_work_log')
       .select('*')
       .gte('date', firstDay)
       .lte('date', lastDay)
-      .eq('user_id', req.userId) 
+      .eq('user_id', String(req.userId))
       .order('date', { ascending: false });
 
-    if (error) throw error;
+    if (historyError ) throw historyError;
     return res.status(200).json({ history: history || [] });
   } catch (error: any) {
     console.error('Помилка GET history:', error);
