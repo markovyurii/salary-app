@@ -139,7 +139,7 @@ export function StatsTab({
       {/* ⚙️ БЛОК НАЛАШТУВАННЯ СТАВКИ */}
       <div className="bg-slate-800 p-4 rounded-2xl border border-slate-700/50 space-y-3 shadow-md">
         <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wide">
-          ⚙ shrink; Налаштування окладу
+          ⚙ Налаштування окладу
         </h4>
         <div className="flex gap-2">
           <input

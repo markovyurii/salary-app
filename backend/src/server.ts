@@ -125,13 +125,13 @@ app.post('/api/work-log', requireAuth, async (req: any, res: Response) => {
 app.get('/api/work-log', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth(); // Серпень = 7
+    const year = req.query.year ? Number(req.query.year) : now.getFullYear();
+    const month = req.query.month ? Number(req.query.month) : (now.getMonth() + 1); // Серпень = 7
 
     // Формуємо чисті ISO дати початку й кінця місяця
-    const firstDay = `${year}-${String(month + 1).padStart(2, '0')}-01`;
-    const lastDayDate = new Date(year, month + 1, 0).getDate();
-    const lastDay = `${year}-${String(month + 1).padStart(2, '0')}-${lastDayDate}`;
+    const firstDay = `${year}-${String(month).padStart(2, '0')}-01`;
+    const lastDayDate = new Date(year, month, 0).getDate();
+    const lastDay = `${year}-${String(month).padStart(2, '0')}-${lastDayDate}`;
 
     // Замість розмитого .like використовуємо чітке порівняння дат, сумісне з типом Date!
     const { data: history, error: historyError } = await supabase
@@ -156,12 +156,12 @@ app.get('/api/salary', requireAuth, async (req: AuthenticatedRequest, res: Respo
     let bonusPercent = bonusQuery ? Number(bonusQuery) : 0;
 
     const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth();
+    const year = req.query.year ? Number(req.query.year) : now.getFullYear();
+    const month = req.query.month ? Number(req.query.month) : (now.getMonth() + 1);
     
-    const firstDay = `${year}-${String(month + 1).padStart(2, '0')}-01`;
-    const lastDayDate = new Date(year, month + 1, 0).getDate();
-    const lastDay = `${year}-${String(month + 1).padStart(2, '0')}-${lastDayDate}`;
+    const firstDay = `${year}-${String(month).padStart(2, '0')}-01`;
+    const lastDayDate =  new Date(year, month, 0).getDate();
+    const lastDay = `${year}-${String(month).padStart(2, '0')}-${lastDayDate}`;
 
     const { data: profile } = await supabase
       .from('profiles')
