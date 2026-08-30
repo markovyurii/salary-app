@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseAuthClient = createClient(
-  "https://supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhudHNqbW1tY3BlZWd5anJqdnFvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAzNzc1ODIsImV4cCI6MjA1NTk1MzU4Mn0.0N2u8b8M-S-2_u3fD9w3p6Z3Z-O-8_9z_w3p6Z3Z"
+  "https://xntsjmmmcpeegyjrjvqo.supabase.co/,
+  "sb_publishable_ZlVIg3I3okwL08KB7l5QFw_AiTknWft"
 );
 
 export const DAY_RATES = {
