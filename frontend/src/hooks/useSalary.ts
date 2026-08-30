@@ -1,12 +1,9 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 
-
-
-
 const supabaseAuthClient = createClient(
-  'https://xntsjmmmcpeegyjrjvqo.supabase.co/',
-  'sb_publishable_ZlVIg3I3okwL08KB7l5QFw_AiTknWft'
+  "https://supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhudHNqbW1tY3BlZWd5anJqdnFvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAzNzc1ODIsImV4cCI6MjA1NTk1MzU4Mn0.0N2u8b8M-S-2_u3fD9w3p6Z3Z-O-8_9z_w3p6Z3Z"
 );
 
 export const DAY_RATES = {
@@ -14,8 +11,7 @@ export const DAY_RATES = {
   RECONNECT: 80, EXTRA_HOUR: 100, DUTY_HOUR: 120, BROUGHT_CLIENT: 150, CONNECT_UO: 180
 };
 
-export const BONUS_OPTIONS = [0,5,10,15
-];
+export const BONUS_OPTIONS = [0, 10, 15, 20];
 
 export interface WorkDay {
   date: string; connect_tv: number; connect_no_tv: number; addon_pon: number;
@@ -27,21 +23,20 @@ export function useSalary() {
   const [bonusPercent, setBonusPercent] = useState<number>(0);
   const [activeTab, setActiveTab] = useState<'stats' | 'add' | 'history'>('stats');
   const [userToken, setUserToken] = useState<string | null>(() => localStorage.getItem('salary_app_token'));
-  const [salaryInput, setSalaryInput] = useState<string>('');
   
   const [authEmail, setAuthEmail] = useState<string>('');
   const [authPassword, setAuthPassword] = useState<string>('');
   const [isRegistering, setIsRegistering] = useState<boolean>(false);
-  const [userName, setUserName] = useState<string>('Користувач');
+  const [userName, setUserName] = useState<any>('Користувач');
+  const [salaryInput, setSalaryInput] = useState<string>('');
 
-
-  const [dbCalculations, setDbCalculations] = useState({
+  const [dbCalculations, setDbCalculations] = useState<any>({
     base_salary: 19200, bonus_calculated_uah: 0, earned_from_work: 0,
     total_salary_prognosis: 19200, envelope_remain_uah: 19200, total_tips_uah: 0
   });
 
   const [historyList, setHistoryList] = useState<WorkDay[]>([]);
-  const [workLog, setWorkLog] = useState({
+  const [workLog, setWorkLog] = useState<any>({
     connect_tv: 0, connect_no_tv: 0, addon_pon: 0, addon_eth: 0,
     reconnect: 0, extra_hours: 0, duty_hours: 0, brought_clients: 0, connect_uo: 0,
     tips: 0, date: new Date().toLocaleDateString('en-CA')
@@ -50,90 +45,67 @@ export function useSalary() {
   const fetchSalaryFromBackend = async () => {
     if (!userToken) return;
     try {
-      const response = await fetch(`https://salary-backend-woq5.onrender.com/api/salary?bonus=${bonusPercent}`, {
+      const response = await fetch(`https://onrender.com{bonusPercent}`, {
         headers: { 'Authorization': `Bearer ${userToken}` }
       });
       if (!response.ok) throw new Error('Failed');
       const data = await response.json();
       setDbCalculations(data.calculations);
-      setSalaryInput(data.calculations.base_salary.toString())
-    } catch (error) { console.error(error); }
+      if (data.calculations?.base_salary) {
+        setSalaryInput(data.calculations.base_salary.toString());
+      }
+    } catch (error: any) { console.error(error); }
   };
 
   const fetchHistoryFromBackend = async () => {
     if (!userToken) return;
     try {
-      const response = await fetch(`https://salary-backend-woq5.onrender.com/api/work-log`, {
+      const response = await fetch(`https://onrender.com`, {
         headers: { 'Authorization': `Bearer ${userToken}` }
       });
       if (!response.ok) throw new Error('Failed');
       const data = await response.json();
       setHistoryList(data.history || []);
-    } catch (error) { console.error(error); }
+    } catch (error: any) { console.error(error); }
   };
 
   const fetchUserProfile = async () => {
-
-  try {
-    const { data: { session }, error: sessionError} = await supabaseAuthClient.auth.getSession();
-    if (sessionError || !session) {
-        // Якщо сесія повністю померла за добу - м'яко виходимо з акаунта, щоб користувач перезайшов
+    try {
+      const { data: { session }, error: sessionError } = await supabaseAuthClient.auth.getSession();
+      if (sessionError || !session) {
         handleLogout();
         return;
       }
       const currentUser = session.user;
-    // Запитуємо у Supabase рядок з нашої таблиці профілів
-    const { data, error } = await supabaseAuthClient
-      .from('profiles')
-      .select('full_name')
-      .eq('id', (await currentUser.id))
-      .single();
+      const { data, error } = await supabaseAuthClient
+        .from('profiles')
+        .select('full_name')
+        .eq('id', currentUser.id)
+        .single();
 
-    if (error) throw error;
-
-    // Якщо в базі записане ім'я — ставимо його, якщо ні — виведемо пошту користувача
-    if (!error && data?.full_name) {
+      if (!error && data?.full_name) {
         setUserName(data.full_name);
       } else {
-        const emailName = currentUser.email?.split('@') || 'Користувач';
+        const emailName = currentUser.email?.split('@')[0] || 'Користувач';
         setUserName(emailName);
       }
-  } catch (error) {
-    console.error('Не вдалося завантажити профіль:', error);
-    setUserName('Користувач');
-  }
-};
-
-const updateBaseSalaryInDb = async () => {
-  if (!userToken || !salaryInput) return;
-  try {
-    const response = await fetch(`https://salary-backend-woq5.onrender.com/api/profile/update`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type':'application/json',
-          'Authorization': `Bearer ${userToken}`
-        },
-        body: JSON.stringify({base_salary: salaryInput})
-      });
-      if (!response.ok) throw new Error('Failed');
-      alert ('⚙️ Нову ставку успішно збережено в хмарі!');
-      fetchSalaryFromBackend();
-  } catch (error) {
-    alert('❌ Помилка оновлення ставки');
-  }
-};
+    } catch (error: any) {
+      console.error(error);
+      setUserName('Користувач');
+    }
+  };
 
   useEffect(() => {
-    const {data:{subscription}} = supabaseAuthClient.auth.onAuthStateChange((_event:any, session:any) => {
-    if(session?.access_token) {
-      setUserToken(session.access_token);
-      localStorage.setItem('salary_app_token', session.access_token);
-    } else {
-      setUserToken(null);
-      localStorage.removeItem('salary_app_token');
-    }
-})
+    const { data: { subscription } } = supabaseAuthClient.auth.onAuthStateChange((_event: any, session: any) => {
+      if (session?.access_token) {
+        setUserToken(session.access_token);
+        localStorage.setItem('salary_app_token', session.access_token);
+      } else {
+        setUserToken(null);
+        localStorage.removeItem('salary_app_token');
+      }
+    });
+
     if (userToken) {
       fetchSalaryFromBackend();
       fetchHistoryFromBackend();
@@ -144,8 +116,8 @@ const updateBaseSalaryInDb = async () => {
   }, [bonusPercent, userToken]);
 
   const handleCounterChange = (field: string, operation: 'inc' | 'dec', step: number = 1) => {
-    setWorkLog(prev => {
-      const currentValue = prev[field as keyof typeof prev] as number;
+    setWorkLog((prev: any) => {
+      const currentValue = prev[field] as number;
       const newValue = operation === 'inc' ? currentValue + step : Math.max(0, currentValue - step);
       return { ...prev, [field]: newValue };
     });
@@ -181,7 +153,7 @@ const updateBaseSalaryInDb = async () => {
 
   const saveDataToServer = async () => {
     try {
-      const response = await fetch('https://salary-backend-woq5.onrender.com/api/work-log', {
+      const response = await fetch('https://onrender.com', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userToken}` },
         body: JSON.stringify(workLog),
@@ -191,13 +163,34 @@ const updateBaseSalaryInDb = async () => {
       fetchSalaryFromBackend();
       fetchHistoryFromBackend();
       setActiveTab('history');
-      setWorkLog(prev => ({ ...prev, connect_tv: 0, connect_no_tv: 0, addon_pon: 0, addon_eth: 0, reconnect: 0, extra_hours: 0, duty_hours: 0, brought_clients: 0, connect_uo: 0, tips: 0 }));
-    } catch (error) { alert(`❌ Помилка збереження`); }
+      setWorkLog((prev: any) => ({ ...prev, connect_tv: 0, connect_no_tv: 0, addon_pon: 0, addon_eth: 0, reconnect: 0, extra_hours: 0, duty_hours: 0, brought_clients: 0, connect_uo: 0, tips: 0 }));
+    } catch (error: any) { alert(`❌ Помилка збереження`); }
+  };
+
+  const updateBaseSalaryInDb = async () => {
+    if (!userToken || !salaryInput) return;
+    try {
+      const response = await fetch('https://salary-backend-woq5.onrender.com/api/profile/update', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${userToken}`
+        },
+        body: JSON.stringify({ base_salary: salaryInput })
+      });
+      
+      if (!response.ok) throw new Error('Failed');
+      alert('⚙️ Нову ставку успішно збережено в хмарі!');
+      fetchSalaryFromBackend(); 
+    } catch (error: any) {
+      alert('❌ Помилка оновлення ставки');
+    }
   };
 
   return {
     bonusPercent, setBonusPercent, activeTab, setActiveTab, userToken,
     authEmail, setAuthEmail, authPassword, setAuthPassword, isRegistering, setIsRegistering,
-    dbCalculations, historyList, workLog, setWorkLog, handleCounterChange, handleAuthAction, handleLogout, saveDataToServer,userName,salaryInput,setSalaryInput, updateBaseSalaryInDb
+    dbCalculations, historyList, workLog, setWorkLog, handleCounterChange, handleAuthAction, handleLogout, saveDataToServer,
+    userName, salaryInput, setSalaryInput, updateBaseSalaryInDb
   };
 }
