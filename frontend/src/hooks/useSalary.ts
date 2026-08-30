@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
-
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -24,8 +24,8 @@ export interface WorkDay {
 }
 
 export function useSalary() {
+  const navigate = useNavigate();
   const [bonusPercent, setBonusPercent] = useState<number>(0);
-  const [activeTab, setActiveTab] = useState<'stats' | 'add' | 'history'>('stats');
   const [userToken, setUserToken] = useState<string | null>(() => localStorage.getItem('salary_app_token'));
   const [salaryInput, setSalaryInput] = useState<string>('');
   
@@ -167,6 +167,7 @@ const updateBaseSalaryInDb = async () => {
         if (token) {
           setUserToken(token);
           localStorage.setItem('salary_app_token', token);
+          navigate('/');
         }
       }
     } catch (err: any) { alert(`❌ Помилка: ${err.message}`); }
@@ -176,7 +177,7 @@ const updateBaseSalaryInDb = async () => {
     await supabaseAuthClient.auth.signOut();
     setUserToken(null);
     localStorage.removeItem('salary_app_token');
-    setActiveTab('stats');
+    navigate('/login')
   };
 
   const saveDataToServer = async () => {
@@ -194,13 +195,13 @@ const updateBaseSalaryInDb = async () => {
       alert(`🎉 Дані успішно збережено!`);
       fetchSalaryFromBackend();
       fetchHistoryFromBackend();
-      setActiveTab('history');
       setWorkLog(prev => ({ ...prev, connect_tv: 0, connect_no_tv: 0, addon_pon: 0, addon_eth: 0, reconnect: 0, extra_hours: 0, duty_hours: 0, brought_clients: 0, connect_uo: 0, tips: 0 }));
+      navigate('/history')
     } catch (error: any) { alert(`❌ Помилка: ${error.message || error}`); }
   };
 
   return {
-    bonusPercent, setBonusPercent, activeTab, setActiveTab, userToken,
+    bonusPercent, setBonusPercent, userToken,
     authEmail, setAuthEmail, authPassword, setAuthPassword, isRegistering, setIsRegistering,
     dbCalculations, historyList, workLog, setWorkLog, handleCounterChange, handleAuthAction, handleLogout, saveDataToServer,userName,salaryInput,setSalaryInput, updateBaseSalaryInDb
   };
