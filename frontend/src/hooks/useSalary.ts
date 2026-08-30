@@ -29,6 +29,9 @@ export function useSalary() {
   const [userToken, setUserToken] = useState<string | null>(() => localStorage.getItem('salary_app_token'));
   const [salaryInput, setSalaryInput] = useState<string>('');
   const [cardPaymentInput, setCardPaymentInput] = useState<string>('');
+  const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth() + 1); // 1-12
+  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
+
   
   const [authEmail, setAuthEmail] = useState<string>('');
   const [authPassword, setAuthPassword] = useState<string>('');
@@ -51,7 +54,7 @@ export function useSalary() {
   const fetchSalaryFromBackend = async () => {
     if (!userToken) return;
     try {
-      const response = await fetch(`https://salary-backend-woq5.onrender.com/api/salary?bonus=${bonusPercent}`, {
+      const response = await fetch(`https://salary-backend-woq5.onrender.com/api/salary?bonus=${bonusPercent}&month=${selectedMonth}&year=${selectedYear}`, {
         headers: { 'Authorization': `Bearer ${userToken}` }
       });
       if (!response.ok) throw new Error('Failed');
@@ -64,7 +67,7 @@ export function useSalary() {
   const fetchHistoryFromBackend = async () => {
     if (!userToken) return;
     try {
-      const response = await fetch(`https://salary-backend-woq5.onrender.com/api/work-log`, {
+      const response = await fetch(`https://salary-backend-woq5.onrender.com/api/work-log/{selectedMonth}&year=${selectedYear}`, {
         headers: { 'Authorization': `Bearer ${userToken}` }
       });
       if (!response.ok) throw new Error('Failed');
@@ -142,7 +145,7 @@ const updateBaseSalaryInDb = async () => {
     }
 
     return () => subscription.unsubscribe();
-  }, [bonusPercent, userToken]);
+  }, [bonusPercent, userToken,selectedMonth, selectedYear]);
 
   const handleCounterChange = (field: string, operation: 'inc' | 'dec', step: number = 1) => {
     setWorkLog(prev => {
@@ -222,6 +225,6 @@ const updateBaseSalaryInDb = async () => {
   return {
     bonusPercent, setBonusPercent, userToken,
     authEmail, setAuthEmail, authPassword, setAuthPassword, isRegistering, setIsRegistering,
-    dbCalculations, historyList, workLog, setWorkLog, handleCounterChange, handleAuthAction, handleLogout, saveDataToServer,userName,salaryInput,setSalaryInput, updateBaseSalaryInDb, cardPaymentInput, saveCardPayment,setCardPaymentInput
+    dbCalculations, historyList, workLog, setWorkLog, handleCounterChange, handleAuthAction, handleLogout, saveDataToServer,userName,salaryInput,setSalaryInput, updateBaseSalaryInDb, cardPaymentInput, saveCardPayment,setCardPaymentInput,selectedMonth,setSelectedMonth,selectedYear,setSelectedYear
   };
 }

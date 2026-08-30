@@ -36,6 +36,7 @@ function AppContent() {
     saveCardPayment,
     cardPaymentInput,
     setCardPaymentInput,
+    selectedMonth, setSelectedMonth, selectedYear, setSelectedYear
   } = useSalary();
 
   return (
@@ -62,7 +63,14 @@ function AppContent() {
           <Route
             path="*"
             element={
-              <MainLayout userName={userName} handleLogout={handleLogout}>
+              <MainLayout
+                userName={userName}
+                handleLogout={handleLogout}
+                selectedMonth={selectedMonth}
+                setSelectedMonth={setSelectedMonth}
+                selectedYear={selectedYear}
+                setSelectedYear={setSelectedYear}
+              >
                 <Routes>
                   <Route
                     path="/"
@@ -76,7 +84,7 @@ function AppContent() {
                         updateBaseSalaryInDb={updateBaseSalaryInDb}
                         cardPaymentInput={cardPaymentInput}
                         setCardPaymentInput={setCardPaymentInput}
-                        saveCardPayment= {saveCardPayment}
+                        saveCardPayment={saveCardPayment}
                       />
                     }
                   />
