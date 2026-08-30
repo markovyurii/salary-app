@@ -171,7 +171,22 @@ app.get('/api/salary', requireAuth, async (req: AuthenticatedRequest, res: Respo
 
     const userBaseSalary = profile ? Number(profile.base_salary) : 19200;
     const { data: logs, error: logsError } = await supabase.from('daily_work_log').select('*').gte('date', firstDay).lte('date', lastDay).eq('user_id', req.authenticatedUserId);
+    
+    //Читаємо ВСІ виплати на картку за цей місяць
+    const { data: cardPayments } = await supabase
+      .from('card_payments')
+      .select('amount')
+      .gte('date', firstDay)
+      .lte('date', lastDay)
+      .eq('user_id', req.authenticatedUserId);
 
+    //Сумуємо всі транзакції на картку, скільки б їх не було
+    let totalCardPaidUah = 0;
+    if (cardPayments) {
+      cardPayments.forEach(pay => {
+        totalCardPaidUah += Number(pay.amount) || 0;
+      });
+    }
     if (logsError) throw logsError;
 
     let totalTv = 0; let totalNoTv = 0; let totalPon = 0; let totalEth = 0;
@@ -206,6 +221,7 @@ app.get('/api/salary', requireAuth, async (req: AuthenticatedRequest, res: Respo
 
     const bonusMoney = (userBaseSalary * bonusPercent) / 100;
     const totalSalary = userBaseSalary + bonusMoney + earnedFromWork; 
+    const envelopeRemain = Math.max(0,totalSalary - totalCardPaidUah)
 
     return res.status(200).json({
       calculations: {
@@ -214,8 +230,9 @@ app.get('/api/salary', requireAuth, async (req: AuthenticatedRequest, res: Respo
         bonus_calculated_uah: bonusMoney,
         earned_from_work: earnedFromWork,
         total_salary_prognosis: totalSalary,
-        envelope_remain_uah: totalSalary,
-        total_tips_uah: totalTips
+        envelope_remain_uah: envelopeRemain,
+        total_tips_uah: totalTips,
+        total_card_paid_uah: totalCardPaidUah
       }
     });
   } catch (error: any) {
@@ -241,6 +258,34 @@ app.post('/api/profile/update', requireAuth, async (req: AuthenticatedRequest, r
     return res.status(500).json({ error: 'Помилка оновлення' });
   }
 });
+
+// 💰 6. МАРШРУТ ЗАПИСУ ВИПЛАТИ НА КАРТКУ (POST)
+app.post('/api/card-payment', requireAuth, async (req: any, res: Response) => {
+  try {
+    const { amount, date } = req.body;
+    const paymentDate = date || new Date().toLocaleDateString('en-CA');
+
+    if (!amount || Number(amount) <= 0) {
+      return res.status(400).json({ error: 'Сума виплати має бути більшою за 0!' });
+    }
+
+    // Записуємо транзакцію в нову таблицю
+    const { data, error } = await supabase
+      .from('card_payments')
+      .insert({
+        date: paymentDate,
+        amount: Number(amount),
+        user_id: req.authenticatedUserId
+      })
+      .select();
+
+    if (error) throw error;
+    return res.status(200).json({ message: 'Виплату на картку успішно враховано!', payment: data });
+  } catch (error: any) {
+    return res.status(500).json({ error: 'Не вдалося зберегти виплату' });
+  }
+});
+
 
 app.listen(PORT, () => {
   console.log(`🚀 Сервер працює на порту ${PORT}`);
