@@ -13,6 +13,7 @@ export function StatsTab({ calculations, bonus, setBonus }: StatsProps) {
       <div className="bg-gradient-to-br from-emerald-500 to-teal-600 p-5 rounded-2xl shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="space-y-1 flex-1">
           <h2 className="text-emerald-100 text-[10px] font-bold uppercase tracking-wider opacity-90">
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21 12a2.25 2.25 0 00-2.25-2.25H15a3 3 0 11-6 0H5.25A2.25 2.25 0 003 12m18 0v6A2.25 2.25 0 0118.75 21H5.25A2.25 2.25 0 013 18v-6m18 0V9A2.25 2.25 0 0018.75 6H5.25A2.25 2.25 0 003 9v3m18 0h-3.75a1.125 1.125 0 00-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125H21"></path></svg>
             Прогноз ЗП на цей місяць
           </h2>
           <p className="text-3xl font-black text-white drop-shadow-sm leading-none">
