@@ -181,7 +181,7 @@ const updateBaseSalaryInDb = async () => {
 
   const saveDataToServer = async () => {
     try {
-      const response = await fetch('https://salary-backend-woq5.onrender.com/api/work-log', {
+      const response = await fetch(`https://salary-backend-woq5.onrender.com/api/work-log`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userToken}` },
         body: JSON.stringify(workLog),
