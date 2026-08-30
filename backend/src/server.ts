@@ -88,7 +88,7 @@ app.post('/api/work-log', requireAuth, async (req: AuthenticatedRequest, res: Re
         connect_uo: connect_uo || 0,
         tips: Number(tips) || 0,
         user_id: req.userId
-      }, { onConflict: 'date,user_id' })
+      }, { onConflict: 'date,user_id' }) // Залишаємо так, PostgreSQL тепер знає цей індекс!
       .select();
 
     if (error) throw error;
