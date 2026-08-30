@@ -95,7 +95,7 @@ export function useSalary() {
     if (!error && data?.full_name) {
         setUserName(data.full_name);
       } else {
-        const emailName = currentUser.email?.split('@') || 'Користувач';
+        const emailName = currentUser.email?.split('@')[0] || 'Користувач';
         setUserName(emailName);
       }
   } catch (error) {
