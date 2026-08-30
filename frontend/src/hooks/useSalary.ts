@@ -67,7 +67,7 @@ export function useSalary() {
   const fetchHistoryFromBackend = async () => {
     if (!userToken) return;
     try {
-      const response = await fetch(`https://salary-backend-woq5.onrender.com/api/work-log/{selectedMonth}&year=${selectedYear}`, {
+      const response = await fetch(`https://salary-backend-woq5.onrender.com/api/work-log/&month=${selectedMonth}&year=${selectedYear}`, {
         headers: { 'Authorization': `Bearer ${userToken}` }
       });
       if (!response.ok) throw new Error('Failed');
