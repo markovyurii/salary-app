@@ -89,27 +89,36 @@ export function MainLayout({
       <main className="flex-1 pt-4">{children}</main>
 
       {/* 🔘 СТАБІЛЬНИЙ ОДНАКОВИЙ ФУТЕР НАВІГАЦІЇ */}
+      {/* 🔘 СТАБІЛЬНИЙ ОДНАКОВИЙ ФУТЕР НАВІГАЦІЇ (ТЕПЕР 4 КНОПКИ) */}
       <nav className="fixed bottom-0 left-0 right-0 bg-slate-950/95 backdrop-blur-md border-t border-slate-800 p-2 flex justify-around items-center z-50 shadow-2xl max-w-md mx-auto rounded-t-2xl">
         <Link
           to="/"
-          className={`flex flex-col items-center space-y-1 py-1 px-3 rounded-xl transition-all ${location.pathname === '/' ? 'text-emerald-400 font-bold bg-emerald-500/10' : 'text-slate-400 hover:text-slate-200'}`}
+          className={`flex flex-col items-center space-y-0.5 py-1 px-2.5 rounded-xl transition-all ${location.pathname === '/' ? 'text-emerald-400 font-bold bg-emerald-500/10' : 'text-slate-400 hover:text-slate-200'}`}
         >
-          <span className="text-lg">📊</span>
-          <span className="text-[10px]">Статистика</span>
+          <span className="text-base">📊</span>
+          <span className="text-[9px]">Аналітика</span>
         </Link>
         <Link
           to="/add"
-          className={`flex flex-col items-center space-y-1 py-1 px-4 rounded-xl transition-all ${location.pathname === '/add' ? 'text-emerald-400 font-bold bg-emerald-500/10' : 'text-slate-400 hover:text-slate-200'}`}
+          className={`flex flex-col items-center space-y-0.5 py-1 px-2.5 rounded-xl transition-all ${location.pathname === '/add' ? 'text-emerald-400 font-bold bg-emerald-500/10' : 'text-slate-400 hover:text-slate-200'}`}
         >
-          <span className="text-lg">➕</span>
-          <span className="text-[10px]">Внести день</span>
+          <span className="text-base">➕</span>
+          <span className="text-[9px]">Внести день</span>
         </Link>
         <Link
           to="/history"
-          className={`flex flex-col items-center space-y-1 py-1 px-3 rounded-xl transition-all ${location.pathname === '/history' ? 'text-emerald-400 font-bold bg-emerald-500/10' : 'text-slate-400 hover:text-slate-200'}`}
+          className={`flex flex-col items-center space-y-0.5 py-1 px-2.5 rounded-xl transition-all ${location.pathname === '/history' ? 'text-emerald-400 font-bold bg-emerald-500/10' : 'text-slate-400 hover:text-slate-200'}`}
         >
-          <span className="text-lg">📋</span>
-          <span className="text-[10px]">Логи дня</span>
+          <span className="text-base">📋</span>
+          <span className="text-[9px]">Логи дня</span>
+        </Link>
+        {/* 🌟 НАША НОВА КНОПКА НАЛАШТУВАНЬ ПРОФІЛЮ */}
+        <Link
+          to="/settings"
+          className={`flex flex-col items-center space-y-0.5 py-1 px-2.5 rounded-xl transition-all ${location.pathname === '/settings' ? 'text-emerald-400 font-bold bg-emerald-500/10' : 'text-slate-400 hover:text-slate-200'}`}
+        >
+          <span className="text-base">⚙️</span>
+          <span className="text-[9px]">Налаштування</span>
         </Link>
       </nav>
     </div>

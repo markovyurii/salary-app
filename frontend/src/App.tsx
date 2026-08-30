@@ -9,6 +9,7 @@ import {
   calculatedTotalDayEarned,
   formatLogDate,
 } from './components/HistoryTab';
+import { SettingsTab } from './components/SettingsTab';
 
 function AppContent() {
   const {
@@ -36,7 +37,10 @@ function AppContent() {
     saveCardPayment,
     cardPaymentInput,
     setCardPaymentInput,
-    selectedMonth, setSelectedMonth, selectedYear, setSelectedYear
+    selectedMonth,
+    setSelectedMonth,
+    selectedYear,
+    setSelectedYear,
   } = useSalary();
 
   return (
@@ -106,6 +110,19 @@ function AppContent() {
                         list={historyList}
                         onCalc={calculatedTotalDayEarned}
                         onFormat={formatLogDate}
+                      />
+                    }
+                  />
+                  <Route
+                    path="/settings"
+                    element={
+                      <SettingsTab
+                        salaryInput={salaryInput}
+                        setSalaryInput={setSalaryInput}
+                        updateBaseSalaryInDb={updateBaseSalaryInDb}
+                        cardPaymentInput={cardPaymentInput}
+                        setCardPaymentInput={setCardPaymentInput}
+                        saveCardPaymentToDb={saveCardPaymentToDb}
                       />
                     }
                   />
