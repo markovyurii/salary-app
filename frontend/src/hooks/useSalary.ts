@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseAuthClient = createClient(
-  "https://xntsjmmmcpeegyjrjvqo.supabase.co/,
+  "https://xntsjmmmcpeegyjrjvqo.supabase.co/",
   "sb_publishable_ZlVIg3I3okwL08KB7l5QFw_AiTknWft"
 );
 
