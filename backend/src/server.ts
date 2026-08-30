@@ -56,7 +56,7 @@ const requireAuth = async (req: AuthenticatedRequest, res: Response, next: NextF
     }
 
     // Якщо все супер, записуємо id користувача в об'єкт запиту і передаємо кермо маршрутам далі
-    req.user = user;
+    req.authenticatedUserId = user.id;
     next();
   } catch (err: any) {
     return res.status(401).json({ error: 'Помилка авторизації' });
@@ -72,7 +72,7 @@ app.post('/api/work-log', requireAuth, async (req: AuthenticatedRequest, res: Re
     } = req.body;
 
     if (!date) return res.status(400).json({ error: 'Поле date є обовʼязковим!' });
-
+    const currentUserId = req.authenticatedUserId;
     const { data, error } = await supabase
       .from('daily_work_log')
       .upsert({
@@ -87,7 +87,7 @@ app.post('/api/work-log', requireAuth, async (req: AuthenticatedRequest, res: Re
         brought_clients: brought_clients || 0,
         connect_uo: connect_uo || 0,
         tips: Number(tips) || 0,
-        user_id: req.user?.id
+        user_id: currentUserId
       }, { onConflict: 'date,user_id' }) // Залишаємо так, PostgreSQL тепер знає цей індекс!
       .select();
 
@@ -121,7 +121,7 @@ app.get('/api/work-log', requireAuth, async (req: AuthenticatedRequest, res: Res
       .select('*')
       .gte('date', firstDay)
       .lte('date', lastDay)
-      .eq('user_id', req.user?.id)
+      .eq('user_id', req.authenticatedUserId)
       .order('date', { ascending: false });
 
     if (historyError ) throw historyError;
@@ -148,11 +148,11 @@ app.get('/api/salary', requireAuth, async (req: AuthenticatedRequest, res: Respo
     const { data: profile } = await supabase
       .from('profiles')
       .select('base_salary')
-      .eq('id', req.user?.id)
+      .eq('id', req.authenticatedUserId)
       .single();
 
     const userBaseSalary = profile ? Number(profile.base_salary) : 19200;
-    const { data: logs, error: logsError } = await supabase.from('daily_work_log').select('*').gte('date', firstDay).lte('date', lastDay).eq('user_id', req.user?.id);
+    const { data: logs, error: logsError } = await supabase.from('daily_work_log').select('*').gte('date', firstDay).lte('date', lastDay).eq('user_id', req.authenticatedUserId);
 
     if (logsError) throw logsError;
 
@@ -214,7 +214,7 @@ app.post('/api/profile/update', requireAuth, async (req: AuthenticatedRequest, r
     const { data, error } = await supabase
       .from('profiles')
       .update({ base_salary: Number(base_salary), updated_at: new Date() })
-      .eq('id', req.user?.id)
+      .eq('id', req.authenticatedUserId)
       .select();
 
     if (error) throw error;
