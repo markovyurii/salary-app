@@ -87,11 +87,15 @@ app.post('/api/work-log', requireAuth, async (req: AuthenticatedRequest, res: Re
         brought_clients: brought_clients || 0,
         connect_uo: connect_uo || 0,
         tips: Number(tips) || 0,
-        user_id: req.userId
+        user_id: String(req.userId)
       }, { onConflict: 'date,user_id' }) // Залишаємо так, PostgreSQL тепер знає цей індекс!
       .select();
 
-    if (error) throw error;
+      if (error) {
+      // 🌟 НАДВАЖЛИВО: Якщо база відхилить запит, ми побачимо ТОЧНУ причину в логах Render!
+      console.error('КРИТИЧНА ПОМИЛКА SUPABASE ДЕБАГ:', error.message, error.details);
+      throw error;
+    }
     return res.status(200).json({ message: 'Дані успішно оновлено за цю дату!', log: data });
   } catch (error: any) {
     console.error('Помилка POST:', error);
