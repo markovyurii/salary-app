@@ -11,6 +11,12 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json()); 
 
+interface AuthenticatedRequest extends Request {
+  user?: {
+    id: string;
+  };
+}
+
 const RATES = {
   BASE_SALARY: 19200,
   CONNECT_TV: 150,
@@ -28,8 +34,37 @@ app.get('/', (req: Request, res: Response) => {
   res.send('Сервер калькулятора ЗП успішно зʼєднано з PostgreSQL!');
 });
 
+
+//НАША ПРОСЛОЙКА БЕЗПЕКИ (MIDDLEWARE)
+
+const requireAuth = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  try {
+    // Дістаємо заголовок Authorization (там лежить рядок "Bearer token_abc123...")
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Доступ заборонено! Відсутній токен авторизації.' });
+    }
+
+    // Відрізаємо слово "Bearer " і отримуємо чистий JWT токен
+    const token = authHeader.split(' ')[1];
+
+    // Просимо Supabase перевірити цей токен на валідність
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+
+    if (error || !user) {
+      return res.status(401).json({ error: 'Сесія застаріла або токен підроблено! Увійдіть знову.' });
+    }
+
+    // Якщо все супер, записуємо id користувача в об'єкт запиту і передаємо кермо маршрутам далі
+    req.userId = user.id;
+    next();
+  } catch (err: any) {
+    return res.status(401).json({ error: 'Помилка авторизації' });
+  }
+};
+
 // 🚀 1. МАРШРУТ ПЕРЕЗАПИСУ ДАНИХ ЗА ДЕНЬ (POST)
-app.post('/api/work-log', async (req: Request, res: Response) => {
+app.post('/api/work-log', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { 
       date, connect_tv, connect_no_tv, addon_pon, addon_eth, 
@@ -50,7 +85,9 @@ app.post('/api/work-log', async (req: Request, res: Response) => {
         extra_hours: Number(extra_hours) || 0,
         duty: Number(duty_hours) || 0,
         brought_clients: brought_clients || 0,
-        connect_uo: connect_uo || 0
+        connect_uo: connect_uo || 0,
+        tips: Number(tips) || 0,
+        user_id: req.userId
       }, { onConflict: 'date' })
       .select();
 
@@ -63,7 +100,7 @@ app.post('/api/work-log', async (req: Request, res: Response) => {
 });
 
 // 📜 2. МАРШРУТ ОТРИМАННЯ ІСТОРІЇ ПО ДНЯХ (GET) - Саме його не міг знайти фронтенд!
-app.get('/api/work-log', async (req: Request, res: Response) => {
+app.get('/api/work-log', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const now = new Date();
     const year = now.getFullYear();
@@ -80,6 +117,7 @@ app.get('/api/work-log', async (req: Request, res: Response) => {
       .select('*')
       .gte('date', firstDay)
       .lte('date', lastDay)
+      .eq('user_id', req.userId) 
       .order('date', { ascending: false });
 
     if (error) throw error;
@@ -90,7 +128,7 @@ app.get('/api/work-log', async (req: Request, res: Response) => {
   }
 });
 // 📊 3. МАРШРУТ РОЗРАХУНКУ ЗАГАЛЬНОЇ ЗП ЗА МІСЯЦЬ (GET)
-app.get('/api/salary', async (req: Request, res: Response) => {
+app.get('/api/salary', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const bonusQuery = req.query.bonus; 
     let bonusPercent = bonusQuery ? Number(bonusQuery) : 0;
@@ -103,11 +141,14 @@ app.get('/api/salary', async (req: Request, res: Response) => {
     const lastDayDate = new Date(year, month + 1, 0).getDate();
     const lastDay = `${year}-${String(month + 1).padStart(2, '0')}-${lastDayDate}`;
 
-    const { data: logs, error } = await supabase
-      .from('daily_work_log')
-      .select('*')
-      .gte('date', firstDay)
-      .lte('date', lastDay);
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('base_salary')
+      .eq('id', req.userId)
+      .single();
+
+    const userBaseSalary = profile ? Number(profile.base_salary) : 19200;
+    const { data: logs } = await supabase.from('daily_work_log').select('*').gte('date', firstDay).lte('date', lastDay).eq('user_id', req.userId);
 
     if (error) throw error;
 
@@ -126,6 +167,7 @@ app.get('/api/salary', async (req: Request, res: Response) => {
         totalDuties += Number(log.duty) || 0; 
         totalBroughtClients += Number(log.brought_clients) || 0;
         totalConnectUo += Number(log.connect_uo) || 0;
+        totalTips += Number(log.tips) || 0;
       });
     }
 
@@ -140,8 +182,8 @@ app.get('/api/salary', async (req: Request, res: Response) => {
       (totalBroughtClients * RATES.BROUGHT_CLIENT_RATE) +
       (totalConnectUo * RATES.CONNECT_UO_RATE);
 
-    const bonusMoney = (RATES.BASE_SALARY * bonusPercent) / 100;
-    const totalSalary = RATES.BASE_SALARY + bonusMoney + earnedFromWork; 
+    const bonusMoney = (userBaseSalary * bonusPercent) / 100;
+    const totalSalary = userBaseSalary + bonusMoney + earnedFromWork; 
 
     return res.status(200).json({
       calculations: {
@@ -149,11 +191,32 @@ app.get('/api/salary', async (req: Request, res: Response) => {
         bonus_percent_applied: `${bonusPercent}%`,
         bonus_calculated_uah: bonusMoney,
         earned_from_work: earnedFromWork,
-        total_salary_prognosis: totalSalary
+        total_salary_prognosis: totalSalary,
+        envelope_remain_uah: totalSalary,
+        total_tips_uah: totalTips
       }
     });
   } catch (error: any) {
     return res.status(500).json({ error: 'Не вдалося порахувати ЗП' });
+  }
+});
+
+app.post('/api/profile/update', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { base_salary } = req.body;
+    if (!base_salary || Number(base_salary) <= 0) {
+      return res.status(400).json({ error: 'Ставка має бути більшою за 0!' });
+    }
+    const { data, error } = await supabase
+      .from('profiles')
+      .update({ base_salary: Number(base_salary), updated_at: new Date() })
+      .eq('id', req.userId)
+      .select();
+
+    if (error) throw error;
+    return res.status(200).json({ message: 'Профіль успішно оновлено!', profile: data });
+  } catch (error: any) {
+    return res.status(500).json({ error: 'Помилка оновлення' });
   }
 });
 
