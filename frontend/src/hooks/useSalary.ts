@@ -125,7 +125,7 @@ const updateBaseSalaryInDb = async () => {
 };
 
   useEffect(() => {
-    const {data:{subscription}} = supabaseAuthClient.auth.onAuthStateChange((event, session) => {
+    const {data:{subscription}} = supabaseAuthClient.auth.onAuthStateChange((_event:any, session:any) => {
     if(session?.access_token) {
       setUserToken(session.access_token);
       localStorage.setItem('salary_app_token', session.access_token);
