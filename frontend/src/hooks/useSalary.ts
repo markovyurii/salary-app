@@ -204,7 +204,7 @@ const updateBaseSalaryInDb = async () => {
   const saveCardPayment = async () => {
     if (!userToken || !cardPaymentInput || Number(cardPaymentInput)<= 0) return alert('❌ Введіть коректну суму виплати!');
     try {
-      const responce = await fetch('https://salary-backend-woq5.onrender.com/api/card-payment',
+      const response = await fetch('https://salary-backend-woq5.onrender.com/api/card-payment',
        {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userToken}` },

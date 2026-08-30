@@ -6,11 +6,10 @@ interface StatsProps {
   setBonus: (v: number) => void;
   salaryInput: string;
   setSalaryInput: (v: string) => void;
-  onUpdateSalary: () => void;
-  // 🌟 Нові пропси для виплат на картку
+  updateBaseSalaryInDb: () => void;
   cardPaymentInput: string;
   setCardPaymentInput: (v: string) => void;
-  onSavePayment: () => void;
+  saveCardPayment: () => void;
 }
 
 export function StatsTab({
@@ -19,7 +18,7 @@ export function StatsTab({
   setBonus,
   salaryInput,
   setSalaryInput,
-  onUpdateSalary,
+  updateBaseSalaryInDb,
   cardPaymentInput,
   setCardPaymentInput,
   saveCardPayment,
@@ -150,7 +149,7 @@ export function StatsTab({
             className="flex-1 p-2.5 bg-slate-900/50 border border-slate-700 rounded-xl text-white font-bold text-sm focus:outline-none focus:border-emerald-500"
           />
           <button
-            onClick={onUpdateSalary}
+            onClick={updateBaseSalaryInDb}
             className="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black px-4 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-95 cursor-pointer"
           >
             Зберегти
