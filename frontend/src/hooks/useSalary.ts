@@ -57,6 +57,10 @@ export function useSalary() {
       const response = await fetch(`https://salary-backend-woq5.onrender.com/api/salary?bonus=${bonusPercent}&month=${selectedMonth}&year=${selectedYear}`, {
         headers: { 'Authorization': `Bearer ${userToken}` }
       });
+      if (response.status === 401) {
+        handleLogout();
+        return;
+      }
       if (!response.ok) throw new Error('Failed');
       const data = await response.json();
       setDbCalculations(data.calculations);
@@ -70,6 +74,10 @@ export function useSalary() {
       const response = await fetch(`https://salary-backend-woq5.onrender.com/api/work-log/?month=${selectedMonth}&year=${selectedYear}`, {
         headers: { 'Authorization': `Bearer ${userToken}` }
       });
+      if (response.status === 401) {
+        handleLogout();
+        return;
+      }
       if (!response.ok) throw new Error('Failed');
       const data = await response.json();
       setHistoryList(data.history || []);
