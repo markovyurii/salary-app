@@ -56,6 +56,7 @@ const requireAuth = async (req: AuthenticatedRequest, res: Response, next: NextF
     }
 
     // Якщо все супер, записуємо id користувача в об'єкт запиту і передаємо кермо маршрутам далі
+    console.log(req)
     req.authenticatedUserId = user.id;
     next();
   } catch (err: any) {
