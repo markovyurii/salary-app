@@ -63,43 +63,61 @@ const requireAuth = async (req: AuthenticatedRequest, res: Response, next: NextF
   }
 };
 
-// 🚀 1. МАРШРУТ ПЕРЕЗАПИСУ ДАНИХ ЗА ДЕНЬ (POST)
-app.post('/api/work-log', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+// 🚀 2. МАРШРУТ ЗАПИСУ РОБОТИ ЗА ДЕНЬ (POST) - ЗАЛІЗОБЕТОННИЙ ДЕБАГ-ВАРІАНТ
+app.post('/api/work-log', requireAuth, async (req: any, res: Response) => {
   try {
-    const { 
-      date, connect_tv, connect_no_tv, addon_pon, addon_eth, 
-      reconnect, extra_hours, duty_hours, brought_clients, connect_uo,tips 
-    } = req.body;
+    // Безпечно дістаємо дані, страхуючи кожне поле від undefined
+    const date = req.body?.date;
+    const connect_tv = req.body?.connect_tv;
+    const connect_no_tv = req.body?.connect_no_tv;
+    const addon_pon = req.body?.addon_pon;
+    const addon_eth = req.body?.addon_eth;
+    const reconnect = req.body?.reconnect;
+    const extra_hours = req.body?.extra_hours;
+    const duty_hours = req.body?.duty_hours;
+    const brought_clients = req.body?.brought_clients;
+    const connect_uo = req.body?.connect_uo;
+    const tips = req.body?.tips;
 
-    if (!date) return res.status(400).json({ error: 'Поле date є обовʼязковим!' });
+    if (!date) {
+      return res.status(400).json({ error: 'Поле date є обовʼязковим!' });
+    }
+
     const currentUserId = req.authenticatedUserId;
+    if (!currentUserId) {
+      return res.status(401).json({ error: 'Критична помилка: ідентифікатор користувача відсутній у сесії!' });
+    }
+
+    // Робимо запит до Supabase, примусово перетворюючи ВСІ лічильники на чисті числа
     const { data, error } = await supabase
       .from('daily_work_log')
       .upsert({
-        date,
-        connect_tv: connect_tv || 0,
-        connect_no_tv: connect_no_tv || 0,
-        addon_pon: addon_pon || 0,
-        addon_eth: addon_eth || 0,
-        reconnect: reconnect || 0,
+        date: date,
+        connect_tv: Number(connect_tv) || 0,
+        connect_no_tv: Number(connect_no_tv) || 0,
+        addon_pon: Number(addon_pon) || 0,
+        addon_eth: Number(addon_eth) || 0,
+        reconnect: Number(reconnect) || 0,
         extra_hours: Number(extra_hours) || 0,
         duty: Number(duty_hours) || 0,
-        brought_clients: brought_clients || 0,
-        connect_uo: connect_uo || 0,
+        brought_clients: Number(brought_clients) || 0,
+        connect_uo: Number(connect_uo) || 0,
         tips: Number(tips) || 0,
         user_id: currentUserId
-      }, { onConflict: 'date,user_id' }) // Залишаємо так, PostgreSQL тепер знає цей індекс!
+      }, { onConflict: 'date,user_id' })
       .select();
 
-      if (error) {
-      // 🌟 НАДВАЖЛИВО: Якщо база відхилить запит, ми побачимо ТОЧНУ причину в логах Render!
-      console.error('КРИТИЧНА ПОМИЛКА SUPABASE ДЕБАГ:', error.message, error.details);
-      throw error;
+    if (error) {
+      console.error('Помилка Supabase:', error.message);
+      return res.status(500).json({ error: `Помилка Supabase: ${error.message}. Деталі: ${error.details || 'немає'}` });
     }
+
     return res.status(200).json({ message: 'Дані успішно оновлено за цю дату!', log: data });
   } catch (error: any) {
-    console.error('Помилка POST:', error);
-    return res.status(500).json({ error: error.message });
+    console.error('Помилка сервера POST:', error);
+    // 🌟 ЗАХИСТ: Якщо error це рядок або обʼєкт без .message, ми все одно виведемо його текст на екран!
+    const errorMessage = error?.message || String(error) || 'Невідома помилка Express логіки';
+    return res.status(500).json({ error: `Внутрішня помилка сервера Node.js: ${errorMessage}` });
   }
 });
 
