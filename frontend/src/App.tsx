@@ -21,7 +21,6 @@ function AppContent() {
     setAuthEmail,
     authPassword,
     setAuthPassword,
-    isRegistering,
     setIsRegistering,
     dbCalculations,
     historyList,
