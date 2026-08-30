@@ -56,7 +56,6 @@ const requireAuth = async (req: AuthenticatedRequest, res: Response, next: NextF
     }
 
     // Якщо все супер, записуємо id користувача в об'єкт запиту і передаємо кермо маршрутам далі
-    console.log(req)
     req.authenticatedUserId = user.id;
     next();
   } catch (err: any) {
@@ -100,7 +99,7 @@ app.post('/api/work-log', requireAuth, async (req: AuthenticatedRequest, res: Re
     return res.status(200).json({ message: 'Дані успішно оновлено за цю дату!', log: data });
   } catch (error: any) {
     console.error('Помилка POST:', error);
-    return res.status(500).json({ error: 'Помилка бази даних', details: error.message });
+    return res.status(500).json({ error: error.message });
   }
 });
 
