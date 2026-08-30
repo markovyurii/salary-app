@@ -41,6 +41,8 @@ function AppContent() {
     setSelectedMonth,
     selectedYear,
     setSelectedYear,
+    authName,
+    setAuthName,
   } = useSalary();
 
   return (
@@ -60,6 +62,8 @@ function AppContent() {
                 setPass={setAuthPassword}
                 isReg={isRegistering}
                 setIsReg={setIsRegistering}
+                authName={authName}
+                setAuthName={setAuthName}
               />
             }
           />

@@ -37,6 +37,7 @@ export function useSalary() {
   const [authPassword, setAuthPassword] = useState<string>('');
   const [isRegistering, setIsRegistering] = useState<boolean>(false);
   const [userName, setUserName] = useState<string>('Користувач');
+  const [authName, setAuthName] = useState<string>('');
 
 
   const [dbCalculations, setDbCalculations] = useState({
@@ -166,12 +167,30 @@ const updateBaseSalaryInDb = async () => {
   const handleAuthAction = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!authEmail || !authPassword) return alert('❌ Заповніть усі поля!');
+    if (isRegistering && !authName) return alert('❌ Введіть ваше імʼя!');
     try {
       if (isRegistering) {
-        const { error } = await supabaseAuthClient.auth.signUp({ email: authEmail, password: authPassword });
-        if (error) throw error;
+        const { data: authData, error: authError } = await supabaseAuthClient.auth.signUp({ 
+          email: authEmail, 
+          password: authPassword,
+          options: {
+            data: { full_name: authName } // Зберігаємо в системних метаданих
+          }
+        });
+        if (authError) throw authError;
+        if (authData?.user) {
+          await supabaseAuthClient
+            .from('profiles')
+            .insert({
+              id: authData.user.id,
+              full_name: authName,
+              base_salary: 19200
+            });
+          setUserName(authName);
+        }
         alert('🎉 Реєстрація успішна! Увійдіть.');
         setIsRegistering(false);
+        setAuthName('');
       } else {
         const { data, error } = await supabaseAuthClient.auth.signInWithPassword({ email: authEmail, password: authPassword });
         if (error) throw error;
@@ -233,6 +252,6 @@ const updateBaseSalaryInDb = async () => {
   return {
     bonusPercent, setBonusPercent, userToken,
     authEmail, setAuthEmail, authPassword, setAuthPassword, isRegistering, setIsRegistering,
-    dbCalculations, historyList, workLog, setWorkLog, handleCounterChange, handleAuthAction, handleLogout, saveDataToServer,userName,salaryInput,setSalaryInput, updateBaseSalaryInDb, cardPaymentInput, saveCardPayment,setCardPaymentInput,selectedMonth,setSelectedMonth,selectedYear,setSelectedYear
+    dbCalculations, historyList, workLog, setWorkLog, handleCounterChange, handleAuthAction, handleLogout, saveDataToServer,userName,salaryInput,setSalaryInput, updateBaseSalaryInDb, cardPaymentInput, saveCardPayment,setCardPaymentInput,selectedMonth,setSelectedMonth,selectedYear,setSelectedYear, authName,setAuthName
   };
 }
