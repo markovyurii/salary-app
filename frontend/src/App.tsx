@@ -117,7 +117,7 @@ function AppContent() {
                         updateBaseSalaryInDb={updateBaseSalaryInDb}
                         cardPaymentInput={cardPaymentInput}
                         setCardPaymentInput={setCardPaymentInput}
-                        saveCardPaymentToDb={saveCardPayment} // 🌟 ФІКС №3: Передаємо правильну пропсу в налаштування!
+                        saveCardPayment={saveCardPayment} // 
                       />
                     }
                   />
