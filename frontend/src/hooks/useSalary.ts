@@ -186,13 +186,17 @@ const updateBaseSalaryInDb = async () => {
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userToken}` },
         body: JSON.stringify(workLog),
       });
-      if (!response.ok) throw new Error('Failed');
+      const data = await response.json();
+      if (!response.ok) {
+        // Якщо сервер повернув помилку, викидаємо її текст далі в блок catch
+        throw new Error(data.error || 'Невідома помилка сервера');
+      }
       alert(`🎉 Дані успішно збережено!`);
       fetchSalaryFromBackend();
       fetchHistoryFromBackend();
       setActiveTab('history');
       setWorkLog(prev => ({ ...prev, connect_tv: 0, connect_no_tv: 0, addon_pon: 0, addon_eth: 0, reconnect: 0, extra_hours: 0, duty_hours: 0, brought_clients: 0, connect_uo: 0, tips: 0 }));
-    } catch (error) { alert(`❌ Помилка збереження`); }
+    } catch (error: any) { alert(`❌ Помилка: ${error.message || error}`); }
   };
 
   return {
