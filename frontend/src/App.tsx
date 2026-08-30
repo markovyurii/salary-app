@@ -1,7 +1,8 @@
 import { Routes, Route, Navigate, BrowserRouter } from 'react-router-dom';
 import { useSalary } from './hooks/useSalary';
 import { MainLayout } from './components/MainLayout';
-import { AuthScreen } from './components/AuthScreen';
+import { LoginScreen } from './components/LoginScreen';
+import { RegisterScreen } from './components/RegisterScreen';
 import { StatsTab } from './components/StatsTab';
 import { AddTab } from './components/AddTab';
 import {
@@ -51,22 +52,14 @@ function AppContent() {
       <Routes>
         {/* 🔒 СЦЕНАРІЙ А: КОРИСТУВАЧ НЕ АВТОРИЗОВАНИЙ */}
         {!userToken ? (
-          <Route
-            path="*"
-            element={
-              <AuthScreen
-                onSubmit={handleAuthAction}
-                email={authEmail}
-                setEmail={setAuthEmail}
-                pass={authPassword}
-                setPass={setAuthPassword}
-                isReg={isRegistering}
-                setIsReg={setIsRegistering}
-                authName={authName}
-                setAuthName={setAuthName}
-              />
-            }
-          />
+          <>
+            {/* Примусово вмикаємо режим логіну в хуку при переході на цей URL */}
+            <Route path="/login" element={<LoginScreen onSubmit={(e) => { setIsRegistering(false); handleAuthAction(e); }} email={authEmail} setEmail={setAuthEmail} pass={authPassword} setPass={setAuthPassword} />} />
+            {/* Примусово вмикаємо режим реєстрації в хуку при переході на цей URL */}
+            <Route path="/register" element={<RegisterScreen onSubmit={(e) => { setIsRegistering(true); handleAuthAction(e); }} email={authEmail} setEmail={setAuthEmail} pass={authPassword} setPass={setAuthPassword} authName={authName} setAuthName={setAuthName} />} />
+            {/* Будь-який лівий запит неавторизованого користувача примусово кидає на форму входу */}
+            <Route path="*" element={<Navigate to="/login" replace />} />
+          </>
         ) : (
           /* 🔓 СЦЕНАРІЙ Б: АВТОРТИЗОВАНИЙ — ВСІ РОУТИ ЗАГОРНУТІ В НАШ ЧИСТИЙ MAINLAYOUT */
           <Route
