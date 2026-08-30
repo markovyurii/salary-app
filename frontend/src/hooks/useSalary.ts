@@ -28,6 +28,7 @@ export function useSalary() {
   const [bonusPercent, setBonusPercent] = useState<number>(0);
   const [userToken, setUserToken] = useState<string | null>(() => localStorage.getItem('salary_app_token'));
   const [salaryInput, setSalaryInput] = useState<string>('');
+  const [cardPaymentInput, setCardPaymentInput] = useState<string>('');
   
   const [authEmail, setAuthEmail] = useState<string>('');
   const [authPassword, setAuthPassword] = useState<string>('');
@@ -200,9 +201,27 @@ const updateBaseSalaryInDb = async () => {
     } catch (error: any) { alert(`❌ Помилка: ${error.message || error}`); }
   };
 
+  const saveCardPayment = async () => {
+    if (!userToken || !cardPaymentInput || Number(cardPaymentInput)<= 0) return alert('❌ Введіть коректну суму виплати!');
+    try {
+      const responce = await fetch('https://salary-backend-woq5.onrender.com/api/card-payment',
+       {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userToken}` },
+        body: JSON.stringify({amount: cardPaymentInput, date: workLog.date}),
+      })
+      if (!response.ok) throw new Error('Failed');
+    alert('💳 Виплату на картку успішно зафіксовано!');
+    setCardPaymentInput(''); // Очищаємо поле
+    fetchSalaryFromBackend(); // Перераховуємо табло миттєво!
+    } catch (error) {
+    alert('❌ Помилка збереження виплати');
+  }
+  };
+
   return {
     bonusPercent, setBonusPercent, userToken,
     authEmail, setAuthEmail, authPassword, setAuthPassword, isRegistering, setIsRegistering,
-    dbCalculations, historyList, workLog, setWorkLog, handleCounterChange, handleAuthAction, handleLogout, saveDataToServer,userName,salaryInput,setSalaryInput, updateBaseSalaryInDb
+    dbCalculations, historyList, workLog, setWorkLog, handleCounterChange, handleAuthAction, handleLogout, saveDataToServer,userName,salaryInput,setSalaryInput, updateBaseSalaryInDb, cardPaymentInput, saveCardPayment,setCardPaymentInput
   };
 }

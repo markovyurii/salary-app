@@ -1,22 +1,32 @@
 import { BONUS_OPTIONS } from '../hooks/useSalary';
+
 interface StatsProps {
   calculations: any;
   bonus: number;
   setBonus: (v: number) => void;
   salaryInput: string;
   setSalaryInput: (v: string) => void;
-  updateBaseSalaryInDb: () => void;
+  onUpdateSalary: () => void;
+  // 🌟 Нові пропси для виплат на картку
+  cardPaymentInput: string;
+  setCardPaymentInput: (v: string) => void;
+  onSavePayment: () => void;
 }
+
 export function StatsTab({
   calculations,
   bonus,
   setBonus,
   salaryInput,
   setSalaryInput,
-  updateBaseSalaryInDb,
+  onUpdateSalary,
+  cardPaymentInput,
+  setCardPaymentInput,
+  saveCardPayment,
 }: StatsProps) {
   return (
     <div className="space-y-4 animate-[fadeIn_0.15s_ease-out]">
+      {/* 📊 ГОЛОВНЕ ТАБЛО ЗП */}
       <div className="bg-gradient-to-br from-emerald-500 to-teal-600 p-5 rounded-2xl shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="space-y-1 flex-1">
           <h2 className="text-emerald-100 text-[10px] font-bold uppercase tracking-wider opacity-90">
@@ -61,23 +71,58 @@ export function StatsTab({
         </div>
       </div>
 
-      <div className="bg-slate-800 p-4 rounded-2xl border border-slate-700/50 flex items-center justify-between shadow-md">
-        <div>
-          <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wide">
-            💵 Накопичені Чайові
-          </h4>
-          <p className="text-[11px] text-slate-400">
-            Твій чистий готівковий прибуток
+      {/* 💳 СТАТИСТИКА КАРТКИ ТА ВІДЖЕТ НАКОПИЧЕНИХ ЧАЙОВИХ */}
+      <div className="grid grid-cols-2 gap-3">
+        <div className="bg-slate-800 p-3.5 rounded-2xl border border-slate-700/50 flex flex-col justify-between shadow-md">
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">
+            💳 На картку зайшло
+          </span>
+          <p className="text-lg font-black text-emerald-400 mt-1">
+            {(calculations?.total_card_paid_uah || 0).toLocaleString('uk-UA')} ₴
           </p>
         </div>
-        <div className="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-4 py-2 rounded-xl font-black text-lg">
-          +{(calculations?.total_tips_uah || 0).toLocaleString('uk-UA')} ₴
+        <div className="bg-slate-800 p-3.5 rounded-2xl border border-slate-700/50 flex flex-col justify-between shadow-md">
+          <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wide">
+            💵 Живі Чайові
+          </span>
+          <p className="text-lg font-black text-amber-400 mt-1">
+            +{(calculations?.total_tips_uah || 0).toLocaleString('uk-UA')} ₴
+          </p>
         </div>
       </div>
 
+      {/* 💳 БЛОК ВНЕСЕННЯ ВИПЛАТИ НА КАРТКУ (АВАНСИ) */}
+      <div className="bg-slate-800 p-4 rounded-2xl border border-slate-700/50 space-y-2.5 shadow-md">
+        <div className="space-y-0.5">
+          <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wide">
+            💸 Фіксація виплати на картку
+          </h4>
+          <p className="text-[10px] text-slate-400">
+            Прийшов аванс чи частина ЗП? Внеси суму сюди:
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <input
+            type="number"
+            placeholder="Сума виплати (грн)"
+            value={cardPaymentInput}
+            onChange={(e) => setCardPaymentInput(e.target.value)}
+            className="flex-1 p-2.5 bg-slate-900/50 border border-slate-700 rounded-xl text-white font-bold text-sm focus:outline-none focus:border-emerald-500"
+          />
+          <button
+            type="button"
+            onClick={saveCardPayment}
+            className="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black px-4 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-95 cursor-pointer"
+          >
+            Внести
+          </button>
+        </div>
+      </div>
+
+      {/* 📊 МОДЕЛЮВАННЯ ПРЕМІЇ */}
       <div className="bg-slate-800 p-4 rounded-2xl border border-slate-700/50 space-y-2.5 shadow-md">
         <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-wide text-center">
-          Моделювання премії
+          Моделювання премії за місяць
         </h3>
         <div className="grid grid-cols-4 gap-1.5 bg-slate-900/40 p-1 rounded-xl border border-slate-700/30">
           {BONUS_OPTIONS.map((opt) => (
@@ -91,9 +136,11 @@ export function StatsTab({
           ))}
         </div>
       </div>
+
+      {/* ⚙️ БЛОК НАЛАШТУВАННЯ СТАВКИ */}
       <div className="bg-slate-800 p-4 rounded-2xl border border-slate-700/50 space-y-3 shadow-md">
         <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wide">
-          ⚙️ Налаштування окладу
+          ⚙ shrink; Налаштування окладу
         </h4>
         <div className="flex gap-2">
           <input
@@ -103,7 +150,7 @@ export function StatsTab({
             className="flex-1 p-2.5 bg-slate-900/50 border border-slate-700 rounded-xl text-white font-bold text-sm focus:outline-none focus:border-emerald-500"
           />
           <button
-            onClick={updateBaseSalaryInDb}
+            onClick={onUpdateSalary}
             className="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black px-4 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-95 cursor-pointer"
           >
             Зберегти

@@ -33,6 +33,9 @@ function AppContent() {
     salaryInput,
     setSalaryInput,
     updateBaseSalaryInDb,
+    saveCardPayment,
+    cardPaymentInput,
+    setCardPaymentInput,
   } = useSalary();
 
   return (
@@ -71,6 +74,9 @@ function AppContent() {
                         salaryInput={salaryInput}
                         setSalaryInput={setSalaryInput}
                         updateBaseSalaryInDb={updateBaseSalaryInDb}
+                        cardPaymentInput={cardPaymentInput}
+                        setCardPaymentInput={setCardPaymentInput}
+                        saveCardPayment= {saveCardPayment}
                       />
                     }
                   />
