@@ -38,11 +38,15 @@ export function useSalary() {
   const [isRegistering, setIsRegistering] = useState<boolean>(false);
   const [userName, setUserName] = useState<string>('Користувач');
   const [authName, setAuthName] = useState<string>('');
+  const [isDriver, setIsDriver] = useState<boolean>(false);
+  const [amortizationInput, setAmortizationInput] = useState<string>('3500');
+
 
 
   const [dbCalculations, setDbCalculations] = useState({
     base_salary: 19200, bonus_calculated_uah: 0, earned_from_work: 0,
-    total_salary_prognosis: 19200, envelope_remain_uah: 19200, total_tips_uah: 0
+    total_salary_prognosis: 19200, envelope_remain_uah: 19200, total_tips_uah: 0,is_driver: false,
+    car_amortization: 3500
   });
 
   const [historyList, setHistoryList] = useState<WorkDay[]>([]);
@@ -65,7 +69,9 @@ export function useSalary() {
       if (!response.ok) throw new Error('Failed');
       const data = await response.json();
       setDbCalculations(data.calculations);
-      setSalaryInput(data.calculations.base_salary.toString())
+      if (data.calculations?.base_salary) setSalaryInput(data.calculations.base_salary.toString());
+      if (data.calculations?.car_amortization) setAmortizationInput(data.calculations.car_amortization.toString());
+      setIsDriver(!!data.calculations?.is_driver);
     } catch (error) { console.error(error); }
   };
 
@@ -117,8 +123,13 @@ export function useSalary() {
   }
 };
 
-const updateBaseSalaryInDb = async () => {
+const updateBaseSalaryInDb = async (customPayload?: any) => {
   if (!userToken || !salaryInput) return;
+  const bodyPayload = customPayload || { 
+      base_salary: Number(salaryInput), 
+      is_driver: isDriver, 
+      car_amortization: Number(amortizationInput) 
+    };
   try {
     const response = await fetch(`https://salary-backend-woq5.onrender.com/api/profile/update`,
       {
@@ -127,9 +138,12 @@ const updateBaseSalaryInDb = async () => {
           'Content-Type':'application/json',
           'Authorization': `Bearer ${userToken}`
         },
-        body: JSON.stringify({base_salary: salaryInput})
+        body: JSON.stringify(bodyPayload)
       });
       if (!response.ok) throw new Error('Failed');
+      if (bodyPayload.base_salary !== undefined) setSalaryInput(bodyPayload.base_salary.toString());
+      if (bodyPayload.car_amortization !== undefined) setAmortizationInput(bodyPayload.car_amortization.toString());
+      if (bodyPayload.is_driver !== undefined) setIsDriver(bodyPayload.is_driver);
       alert ('⚙️ Нову ставку успішно збережено в хмарі!');
       fetchSalaryFromBackend();
   } catch (error) {
@@ -252,6 +266,6 @@ const updateBaseSalaryInDb = async () => {
   return {
     bonusPercent, setBonusPercent, userToken,
     authEmail, setAuthEmail, authPassword, setAuthPassword, isRegistering, setIsRegistering,
-    dbCalculations, historyList, workLog, setWorkLog, handleCounterChange, handleAuthAction, handleLogout, saveDataToServer,userName,salaryInput,setSalaryInput, updateBaseSalaryInDb, cardPaymentInput, saveCardPayment,setCardPaymentInput,selectedMonth,setSelectedMonth,selectedYear,setSelectedYear, authName,setAuthName
+    dbCalculations, historyList, workLog, setWorkLog, handleCounterChange, handleAuthAction, handleLogout, saveDataToServer,userName,salaryInput,setSalaryInput, updateBaseSalaryInDb, cardPaymentInput, saveCardPayment,setCardPaymentInput,selectedMonth,setSelectedMonth,selectedYear,setSelectedYear, authName,setAuthName,isDriver, setIsDriver, amortizationInput, setAmortizationInput
   };
 }

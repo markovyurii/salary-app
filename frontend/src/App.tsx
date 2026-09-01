@@ -43,6 +43,10 @@ function AppContent() {
     setSelectedYear,
     authName,
     setAuthName,
+    isDriver,
+    setIsDriver,
+    amortizationInput,
+    setAmortizationInput,
   } = useSalary();
 
   return (
@@ -53,9 +57,39 @@ function AppContent() {
         {!userToken ? (
           <>
             {/* Примусово вмикаємо режим логіну в хуку при переході на цей URL */}
-            <Route path="/login" element={<LoginScreen onSubmit={(e) => { setIsRegistering(false); handleAuthAction(e); }} email={authEmail} setEmail={setAuthEmail} pass={authPassword} setPass={setAuthPassword} />} />
+            <Route
+              path="/login"
+              element={
+                <LoginScreen
+                  onSubmit={(e) => {
+                    setIsRegistering(false);
+                    handleAuthAction(e);
+                  }}
+                  email={authEmail}
+                  setEmail={setAuthEmail}
+                  pass={authPassword}
+                  setPass={setAuthPassword}
+                />
+              }
+            />
             {/* Примусово вмикаємо режим реєстрації в хуку при переході на цей URL */}
-            <Route path="/register" element={<RegisterScreen onSubmit={(e) => { setIsRegistering(true); handleAuthAction(e); }} email={authEmail} setEmail={setAuthEmail} pass={authPassword} setPass={setAuthPassword} authName={authName} setAuthName={setAuthName} />} />
+            <Route
+              path="/register"
+              element={
+                <RegisterScreen
+                  onSubmit={(e) => {
+                    setIsRegistering(true);
+                    handleAuthAction(e);
+                  }}
+                  email={authEmail}
+                  setEmail={setAuthEmail}
+                  pass={authPassword}
+                  setPass={setAuthPassword}
+                  authName={authName}
+                  setAuthName={setAuthName}
+                />
+              }
+            />
             {/* Будь-який лівий запит неавторизованого користувача примусово кидає на форму входу */}
             <Route path="*" element={<Navigate to="/login" replace />} />
           </>
@@ -113,7 +147,11 @@ function AppContent() {
                         updateBaseSalaryInDb={updateBaseSalaryInDb}
                         cardPaymentInput={cardPaymentInput}
                         setCardPaymentInput={setCardPaymentInput}
-                        saveCardPayment={saveCardPayment} // 
+                        saveCardPayment={saveCardPayment}
+                        isDriver={isDriver}
+                        setIsDriver={setIsDriver}
+                        amortizationInput={amortizationInput}
+                        setAmortizationInput={setAmortizationInput}
                       />
                     }
                   />
