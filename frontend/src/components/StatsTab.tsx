@@ -27,7 +27,7 @@ export function StatsTab({ calculations, bonus, setBonus }: StatsProps) {
           <div className="w-max mt-3 flex bg-slate-950/20 px-2.5 py-1 rounded-lg border border-white/5 text-[11px] font-semibold text-emerald-50">
             <div className="flex items-center gap-1">
               <i className="fa-solid fa-envelope-open-text text-emerald-50"></i>
-              <span>Конверт:</span>
+              <span>Конверт: x</span>
             </div>
             <span className="text-amber-300 font-black pl-1">
               {(calculations?.envelope_remain_uah || 0).toLocaleString('uk-UA')}{' '}
