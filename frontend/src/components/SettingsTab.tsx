@@ -1,7 +1,7 @@
 interface SettingsProps {
   salaryInput: string;
   setSalaryInput: (v: string) => void;
-  updateBaseSalaryInDb: () => void;
+  updateBaseSalaryInDb: (payload?: any) => void; 
   cardPaymentInput: string;
   setCardPaymentInput: (v: string) => void;
   saveCardPayment: () => void;
@@ -10,8 +10,6 @@ interface SettingsProps {
   amortizationInput: string;
   setAmortizationInput: (v: string) => void;
 }
-
-
 
 export function SettingsTab({
   salaryInput,
@@ -29,7 +27,7 @@ export function SettingsTab({
     updateBaseSalaryInDb({
       base_salary: Number(salaryInput) || 19200,
       is_driver: Boolean(isDriver),
-      car_amortization: Number(amortizationInput) || 3500
+      car_amortization: Number(amortizationInput) || 3500,
     });
   };
   return (
@@ -85,26 +83,28 @@ export function SettingsTab({
       </div>
 
       {/* 💰 СУМА АМОРТИЗАЦІЇ (ПЛАВНО ВИСКАКУЄ ТІЛЬКИ ДЛЯ ВОДІЇВ) */}
-        {isDriver && (
-          <div className="space-y-1.5 animate-[fadeIn_0.1s_ease-out]">
-            <label className="text-[10px] font-bold text-emerald-400 uppercase tracking-wide flex items-center gap-1.5">
-              <i className="fa-solid fa-wrench"></i> Фактична амортизація за місяць (грн)
-            </label>
-            <input 
-              type="number" 
-              value={amortizationInput} 
-              onChange={(e) => setAmortizationInput(e.target.value)} 
-              className="w-full p-2.5 bg-slate-900/50 border border-slate-700 rounded-xl text-white font-bold text-sm focus:outline-none focus:border-emerald-500" 
-            />
-          </div>
-        )}
-        <button 
-          type="button" 
-          onClick={handleSaveProfile}
-          className="w-full bg-slate-800 hover:bg-emerald-500/10 text-emerald-400 font-bold py-2 rounded-xl text-xs border border-emerald-500/20 active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-1.5"
-        >
-          <i className="fa-solid fa-floppy-disk"></i> Зберегти статус та амортизацію
-        </button>
+      {isDriver && (
+        <div className="space-y-1.5 animate-[fadeIn_0.1s_ease-out]">
+          <label className="text-[10px] font-bold text-emerald-400 uppercase tracking-wide flex items-center gap-1.5">
+            <i className="fa-solid fa-wrench"></i> Фактична амортизація за
+            місяць (грн)
+          </label>
+          <input
+            type="number"
+            value={amortizationInput}
+            onChange={(e) => setAmortizationInput(e.target.value)}
+            className="w-full p-2.5 bg-slate-900/50 border border-slate-700 rounded-xl text-white font-bold text-sm focus:outline-none focus:border-emerald-500"
+          />
+        </div>
+      )}
+      <button
+        type="button"
+        onClick={handleSaveProfile}
+        className="w-full bg-slate-800 hover:bg-emerald-500/10 text-emerald-400 font-bold py-2 rounded-xl text-xs border border-emerald-500/20 active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-1.5"
+      >
+        <i className="fa-solid fa-floppy-disk"></i> Зберегти статус та
+        амортизацію
+      </button>
       {/* 💳 БЛОК ВНЕСЕННЯ ВИПЛАТИ НА КАРТКУ (АВАНСИ) */}
       <div className="bg-slate-800 p-4 rounded-2xl border border-slate-700/50 space-y-2.5 shadow-md">
         <div className="space-y-0.5">

@@ -57,6 +57,16 @@ export function StatsTab({ calculations, bonus, setBonus }: StatsProps) {
               +{(calculations?.earned_from_work || 0).toLocaleString('uk-UA')}
             </span>
           </div>
+          {calculations?.is_driver && (
+            <div className="flex justify-between gap-3 text-amber-300 font-bold border-t border-white/5 pt-1 mt-1 animate-[fadeIn_0.1s_ease-out]">
+              <span className="flex items-center gap-1">
+                <i className="fa-solid fa-car text-[10px]"></i> Авто:
+              </span>
+              <span>
+                +{(calculations?.car_amortization || 0).toLocaleString('uk-UA')}
+              </span>
+            </div>
+          )}
         </div>
       </div>
 
