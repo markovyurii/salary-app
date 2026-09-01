@@ -165,11 +165,13 @@ app.get('/api/salary', requireAuth, async (req: AuthenticatedRequest, res: Respo
 
     const { data: profile } = await supabase
       .from('profiles')
-      .select('base_salary')
+      .select('base_salary,is_driver, car_amortization')
       .eq('id', req.authenticatedUserId)
       .single();
 
     const userBaseSalary = profile ? Number(profile.base_salary) : 19200;
+    const isDriver = profile ? Boolean(profile.is_driver) : false;
+    const carAmortization = profile ? Number(profile.car_amortization) : 3500;
     const { data: logs, error: logsError } = await supabase.from('daily_work_log').select('*').gte('date', firstDay).lte('date', lastDay).eq('user_id', req.authenticatedUserId);
     
     //Читаємо ВСІ виплати на картку за цей місяць
@@ -220,12 +222,14 @@ app.get('/api/salary', requireAuth, async (req: AuthenticatedRequest, res: Respo
       (totalConnectUo * RATES.CONNECT_UO_RATE);
 
     const bonusMoney = (userBaseSalary * bonusPercent) / 100;
-    const totalSalary = userBaseSalary + bonusMoney + earnedFromWork; 
+    const totalSalary = userBaseSalary + bonusMoney + earnedFromWork + (isDriver ? carAmortization : 0); 
     const envelopeRemain = Math.max(0,totalSalary - totalCardPaidUah)
 
     return res.status(200).json({
       calculations: {
         base_salary: userBaseSalary,
+        is_driver: isDriver,
+        car_amortization: carAmortization,
         bonus_percent_applied: `${bonusPercent}%`,
         bonus_calculated_uah: bonusMoney,
         earned_from_work: earnedFromWork,
@@ -242,16 +246,29 @@ app.get('/api/salary', requireAuth, async (req: AuthenticatedRequest, res: Respo
 
 app.post('/api/profile/update', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { base_salary } = req.body;
-    if (!base_salary || Number(base_salary) <= 0) {
-      return res.status(400).json({ error: 'Ставка має бути більшою за 0!' });
+    const { base_salary, is_driver, car_amortization } = req.body;
+    const updateData: any = { 
+      updated_at: new Date() 
+    };
+    if (base_salary !== undefined) {
+      if (Number(base_salary) <= 0) {
+        return res.status(400).json({ error: 'Ставка має бути більшою за 0!' });
+      }
+      updateData.base_salary = Number(base_salary);
+    }
+
+    if (is_driver !== undefined) {
+      updateData.is_driver = Boolean(is_driver);
+    }
+     if (car_amortization !== undefined) {
+      updateData.car_amortization = Number(car_amortization);
     }
     const { data, error } = await supabase
       .from('profiles')
-      .update({ base_salary: Number(base_salary), updated_at: new Date() })
+      .update(updateData)
       .eq('id', req.authenticatedUserId)
       .select();
-
+      
     if (error) throw error;
     return res.status(200).json({ message: 'Профіль успішно оновлено!', profile: data });
   } catch (error: any) {
