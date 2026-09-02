@@ -19,15 +19,20 @@ interface AuthenticatedRequest extends Request {
 
 const RATES = {
   BASE_SALARY: 19200,
-  CONNECT_TV: 150,
-  CONNECT_NO_TV: 100,
-  ADDON_PON: 100,
-  ADDON_ETH: 75,
+  CONNECT_WITH_TV: 150,
+  CONNECT_WITH_TV_SHARED: 75,
+  CONNECT_INTERNET_SOLO: 100,
+  CONNECT_INTERNET_SHARED: 50,
+  CONNECT_TV_SOLO: 100,
+  CONNECT_TV_SHARED: 50,
   RECONNECT: 80,
   EXTRA_HOUR_RATE: 100,
   DUTY_HOUR_RATE: 120,
   BROUGHT_CLIENT_RATE: 150,
-  CONNECT_UO_RATE: 180
+  CONNECT_UO_RATE: 180,
+  ADDON_PON_SOLO: 100,
+  ADDON_PON_SHARED: 50,
+  PARKING_HOUR_RATE: 15
 };
 
 app.get('/', (req: Request, res: Response) => {
@@ -68,13 +73,19 @@ app.post('/api/work-log', requireAuth, async (req: any, res: Response) => {
   try {
     // Безпечно дістаємо дані, страхуючи кожне поле від undefined
     const date = req.body?.date;
-    const connect_tv = req.body?.connect_tv;
-    const connect_no_tv = req.body?.connect_no_tv;
-    const addon_pon = req.body?.addon_pon;
-    const addon_eth = req.body?.addon_eth;
+    const connect_with_tv = req.body?.connect_with_tv;
+    const connect_with_tv_shared = req.body?.connect_with_tv_shared;
+    const connect_internet_solo = req.body?.connect_internet_solo;
+    const connect_internet_shared = req.body?.connect_internet_shared;
+    const connect_tv_solo = req.body?.connect_tv_solo;
+    const connect_tv_shared = req.body?.connect_tv_shared;
+    const addon_pon_solo = req.body?.addon_pon_solo;
+    const addon_pon_shared = req.body?.addon_pon_shared;
     const reconnect = req.body?.reconnect;
     const extra_hours = req.body?.extra_hours;
     const duty_hours = req.body?.duty_hours;
+    const parking_hours = req.body?.parking_hours;
+    const travel_compensation= req.body?.travel_compensation;
     const brought_clients = req.body?.brought_clients;
     const connect_uo = req.body?.connect_uo;
     const tips = req.body?.tips;
@@ -93,12 +104,18 @@ app.post('/api/work-log', requireAuth, async (req: any, res: Response) => {
       .from('daily_work_log')
       .upsert({
         date: date,
-        connect_tv: Number(connect_tv) || 0,
-        connect_no_tv: Number(connect_no_tv) || 0,
-        addon_pon: Number(addon_pon) || 0,
-        addon_eth: Number(addon_eth) || 0,
+        connect_with_tv: Number(connect_with_tv) || 0,
+        connect_with_tv_shared: Number(connect_with_tv_shared) || 0,
+        connect_internet_solo: Number(connect_internet_solo) || 0,
+        connect_internet_shared: Number(connect_internet_shared) || 0,
+        connect_tv_solo: Number(connect_tv_solo) || 0,
+        connect_tv_shared: Number(connect_tv_shared) || 0, 
+        addon_pon_solo: Number(addon_pon_solo) || 0,
+        addon_pon_shared: Number(addon_pon_shared) || 0, 
         reconnect: Number(reconnect) || 0,
         extra_hours: Number(extra_hours) || 0,
+        parking_hours: Number(parking_hours) || 0,
+        travel_compensation: Number(travel_compensation) || 0,
         duty: Number(duty_hours) || 0,
         brought_clients: Number(brought_clients) || 0,
         connect_uo: Number(connect_uo) || 0,
@@ -191,35 +208,46 @@ app.get('/api/salary', requireAuth, async (req: AuthenticatedRequest, res: Respo
     }
     if (logsError) throw logsError;
 
-    let totalTv = 0; let totalNoTv = 0; let totalPon = 0; let totalEth = 0;
-    let totalReconnect = 0; let totalExtraHours = 0; let totalDuties = 0;
-    let totalBroughtClients = 0; let totalConnectUo = 0; let totalTips = 0;
+    let connect_with_tv = 0; let connect_with_tv_shared = 0; let connect_internet_solo = 0; let connect_internet_shared = 0;
+    let connect_tv_solo = 0; let connect_tv_shared = 0; let reconnect = 0; let connect_uo = 0; let brought_clients = 0;
+    let addon_pon_solo = 0; let addon_pon_shared = 0;
+    let extra_hours = 0; let duty_hours = 0; let parking_hours = 0; let travel_trips = 0; let totalTips = 0;
 
     if (logs) {
       logs.forEach(log => {
-        totalTv += Number(log.connect_tv) || 0;
-        totalNoTv += Number(log.connect_no_tv) || 0;
-        totalPon += Number(log.addon_pon) || 0;
-        totalEth += Number(log.addon_eth) || 0;
-        totalReconnect += Number(log.reconnect) || 0;
-        totalExtraHours += Number(log.extra_hours) || 0;
-        totalDuties += Number(log.duty) || 0; 
-        totalBroughtClients += Number(log.brought_clients) || 0;
-        totalConnectUo += Number(log.connect_uo) || 0;
+        connect_with_tv += Number(log.connect_with_tv) || 0;
+        connect_with_tv_shared += Number(log.connect_with_tv_shared) || 0;
+       connect_internet_solo += Number(log.connect_internet_solo) || 0;
+        connect_internet_shared += Number(log.connect_internet_shared) || 0;
+        connect_tv_solo += Number(log.connect_tv_solo) || 0;
+        connect_tv_shared += Number(log.connect_tv_shared) || 0;
+        reconnect += Number(log.reconnect) || 0;
+        connect_uo += Number(log.connect_uo) || 0;
+        brought_clients += Number(log.brought_clients) || 0;
+        addon_pon_solo += Number(log.addon_pon_solo) || 0;
+        addon_pon_shared += Number(log.addon_pon_shared) || 0;
+        extra_hours += Number(log.extra_hours) || 0;
+        duty_hours += Number(log.duty) || 0;
+        parking_hours += Number(log.parking_hours) || 0;
+        travel_trips += Number(log.travel_compensation) || 0;
         totalTips += Number(log.tips) || 0;
       });
     }
 
     const earnedFromWork = 
-      (totalTv * RATES.CONNECT_TV) +
-      (totalNoTv * RATES.CONNECT_NO_TV) +
-      (totalPon * RATES.ADDON_PON) +
-      (totalEth * RATES.ADDON_ETH) +
-      (totalReconnect * RATES.RECONNECT) +
-      (totalExtraHours * RATES.EXTRA_HOUR_RATE) +
-      (totalDuties * RATES.DUTY_HOUR_RATE) +
-      (totalBroughtClients * RATES.BROUGHT_CLIENT_RATE) +
-      (totalConnectUo * RATES.CONNECT_UO_RATE);
+      (connect_with_tv * RATES.CONNECT_WITH_TV) + 
+      (connect_with_tv_shared * RATES.CONNECT_WITH_TV_SHARED) + 
+      (connect_internet_solo * RATES.CONNECT_INTERNET_SOLO) + 
+      (connect_internet_shared * RATES.CONNECT_INTERNET_SHARED) + 
+      (connect_tv_solo * RATES.CONNECT_TV_SOLO) + 
+      (connect_tv_shared * RATES.CONNECT_TV_SHARED) + 
+      (reconnect * RATES.RECONNECT) + 
+      (connect_uo * RATES.CONNECT_UO_RATE) + 
+      (brought_clients * RATES.BROUGHT_CLIENT_RATE) + 
+      (addon_pon_solo * RATES.ADDON_PON_SOLO) +
+      (addon_pon_shared * RATES.ADDON_PON_SHARED) +
+      (extra_hours * 100) + (duty_hours * 120) +
+      (isDriver ? (parking_hours * RATES.PARKING_HOUR_RATE) : (travel_trips * 26));
 
     const bonusMoney = (userBaseSalary * bonusPercent) / 100;
     const totalSalary = userBaseSalary + bonusMoney + earnedFromWork + (isDriver ? carAmortization : 0); 
@@ -237,6 +265,11 @@ app.get('/api/salary', requireAuth, async (req: AuthenticatedRequest, res: Respo
         envelope_remain_uah: envelopeRemain,
         total_tips_uah: totalTips,
         total_card_paid_uah: totalCardPaidUah
+      },
+      stats: {
+        connect_with_tv, connect_with_tv_shared, connect_internet_solo, connect_internet_shared,
+        connect_tv_solo, connect_tv_shared, reconnect, connect_uo, brought_clients,
+        addon_pon_solo, addon_pon_shared, extra_hours, duty_hours, parking_hours, travel_trips
       }
     });
   } catch (error: any) {
