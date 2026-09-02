@@ -113,8 +113,6 @@ function AppContent() {
                     element={
                       <StatsTab
                         calculations={dbCalculations}
-                        bonus={bonusInput}
-                        setBonus={setBonusInput}
                         monthlyStats={monthlyStats}
                       />
                     }
@@ -155,6 +153,8 @@ function AppContent() {
                         setIsDriver={setIsDriver}
                         amortizationInput={amortizationInput}
                         setAmortizationInput={setAmortizationInput}
+                        bonusInput={bonusInput}     
+                        setBonusInput={setBonusInput}
                       />
                     }
                   />

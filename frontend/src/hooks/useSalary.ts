@@ -14,8 +14,6 @@ export const DAY_RATES = {
   RECONNECT: 80, EXTRA_HOUR: 100, DUTY_HOUR: 120, BROUGHT_CLIENT: 150, CONNECT_UO: 180
 };
 
-export const BONUS_OPTIONS = [0,5,10,15
-];
 
 export interface WorkDay {
   date: string; connect_tv: number; connect_no_tv: number; addon_pon: number;
