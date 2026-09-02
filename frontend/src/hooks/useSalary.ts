@@ -60,7 +60,7 @@ export function useSalary() {
   const fetchSalaryFromBackend = async () => {
     if (!userToken) return;
     try {
-      const response = await fetch(`https://salary-backend-woq5.onrender.com/api/salary?bonus=${bonusPercent}&month=${selectedMonth}&year=${selectedYear}`, {
+      const response = await fetch(`https://salary-backend-woq5.onrender.com/api/salary?month=${selectedMonth}&year=${selectedYear}`, {
         headers: { 'Authorization': `Bearer ${userToken}` }
       });
       if (response.status === 401) {
