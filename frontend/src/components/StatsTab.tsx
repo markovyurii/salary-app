@@ -70,6 +70,29 @@ export function StatsTab({ calculations, bonus, setBonus, monthlyStats }: StatsP
           )}
         </div>
       </div>
+      {/* 🌟 ПОВЕРТАЄМО БЛОК КАРТКИ ТА ЧАЙОВИХ НА МІСЦЕ */}
+      <div className="grid grid-cols-2 gap-3">
+        <div className="bg-slate-800 p-3.5 rounded-2xl border border-slate-700/50 flex flex-col justify-between shadow-md">
+          <p className="font-bold flex gap-2 items-center text-xs text-slate-400 uppercase tracking-wide">
+            <i className="fa-solid fa-credit-card text-emerald-400"></i>
+            <span>На карту</span>
+          </p>
+          <p className="text-lg font-black text-emerald-400 mt-1">
+            {(calculations?.total_card_paid_uah || 0).toLocaleString('uk-UA')} ₴
+          </p>
+        </div>
+        <div className="bg-slate-800 p-3.5 rounded-2xl border border-slate-700/50 flex flex-col justify-between shadow-md">
+          <p>
+            <span className="text-xs font-bold text-amber-400 uppercase tracking-wide flex items-center gap-1.5">
+              <i className="fa-solid fa-piggy-bank text-amber-400"></i>
+              на чай
+            </span>
+          </p>
+          <p className="text-lg font-black text-amber-400 mt-1">
+            +{(calculations?.total_tips_uah || 0).toLocaleString('uk-UA')} ₴
+          </p>
+        </div>
+      </div>
 
       {/* 💳 СТАТИСТИКА КАРТКИ ТА ЧАЙОВИХ */}
        <div className="bg-slate-800 p-4 rounded-2xl border border-slate-700/50 space-y-2.5 shadow-md">
