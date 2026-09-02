@@ -1,27 +1,7 @@
 // 🌟 Описуємо інтерфейс прямо тут, щоб компонент був незалежним
-export interface WorkDay {
-  date: string;
-  connect_with_tv: number;
-  connect_with_tv_shared: number;
-  connect_internet_solo: number;
-  connect_internet_shared: number;
-  connect_tv_solo: number;
-  connect_tv_shared: number;
-  reconnect: number;
-  connect_uo: number;
-  brought_clients: number;
-  addon_pon_solo: number;
-  addon_pon_shared: number;
-  extra_hours: number;
-  duty: number;
-  parking_hours: number;
-  travel_compensation: number;
-  tips: number;
-}
 
 interface HistProps {
-  list: WorkDay[];
-  onCalc: (day: WorkDay) => number;
+  list: any[];
   onFormat: (d: string) => string;
 }
 
@@ -71,7 +51,7 @@ export const formatLogDate = (dateStr: string) => {
   return `${date.toLocaleDateString('uk-UA', { weekday: 'short' })}, ${date.toLocaleDateString('uk-UA', { day: 'numeric' })} ${date.toLocaleDateString('uk-UA', { month: 'short' }).replace('.', '')}`;
 };
 
-export function HistoryTab({ list, onCalc, onFormat }: HistProps) {
+export function HistoryTab({ list, onFormat }: HistProps) {
   return (
     <div className="bg-slate-800 p-4 rounded-2xl border border-slate-700/50 space-y-3 shadow-md animate-[fadeIn_0.15s_ease-out]">
       <div className="flex justify-between items-center border-b border-slate-700/40 pb-2">

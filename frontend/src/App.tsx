@@ -134,7 +134,6 @@ function AppContent() {
                     element={
                       <HistoryTab
                         list={historyList}
-                        onCalc={calculatedTotalDayEarned}
                         onFormat={formatLogDate}
                       />
                     }
