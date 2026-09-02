@@ -229,8 +229,8 @@ export function StatsTab({
                 парковку:
               </span>
               <span>
-                {monthlyStats?.parking_hours || 0} год (
-                {monthlyStats?.parking_hours * 15 || 0} грн)
+               
+                {monthlyStats?.parking_hours * 15 || 0} грн
               </span>
             </div>
           ) : (
@@ -239,8 +239,7 @@ export function StatsTab({
                 <i className="fa-solid fa-bus"></i> Компенсація проїзду (26 грн):
               </span>
               <span>
-                {monthlyStats?.travel_trips || 0} поїзд. (
-                {monthlyStats?.travel_trips * 26 || 0} грн)
+                {monthlyStats?.travel_trips * 26 || 0} грн
               </span>
             </div>
           )}
