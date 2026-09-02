@@ -9,6 +9,8 @@ interface SettingsProps {
   setIsDriver: (v: boolean) => void;
   amortizationInput: string;
   setAmortizationInput: (v: string) => void;
+  bonusInput: string;
+  setBonusInput: (v: string) => void;
 }
 
 export function SettingsTab({
@@ -22,12 +24,15 @@ export function SettingsTab({
   setIsDriver,
   amortizationInput,
   setAmortizationInput,
+  bonusInput,
+  setBonusInput,
 }: SettingsProps) {
   const handleSaveProfile = () => {
     updateBaseSalaryInDb({
       base_salary: Number(salaryInput) || 19200,
       is_driver: Boolean(isDriver),
       car_amortization: Number(amortizationInput) || 3500,
+      bonus_percent: Number(bonusInput) || 0,
     });
   };
   return (
@@ -183,6 +188,18 @@ export function SettingsTab({
             Зберегти
           </button>
         </div>
+      </div>
+      <div className="space-y-1.5">
+        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide flex items-center gap-1.5">
+          <i className="fa-solid fa-chart-line text-emerald-400"></i> Фінальна премія за місяць (%)
+        </label>
+        <input 
+          type="number" 
+          placeholder="0"
+          value={bonusInput} 
+          onChange={(e) => setBonusInput(e.target.value)} 
+          className="w-full p-2.5 bg-slate-900/50 border border-slate-700 rounded-xl text-white font-bold text-sm focus:outline-none focus:border-emerald-500" 
+        />
       </div>
     </div>
   );

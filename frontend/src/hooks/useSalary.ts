@@ -42,7 +42,7 @@ export function useSalary() {
   const [amortizationInput, setAmortizationInput] = useState<string>('3500');
 
   const [monthlyStats, setMonthlyStats] = useState<any>({});
-
+  const [bonusInput, setBonusInput] = useState<string>('0');  
 
 
   const [dbCalculations, setDbCalculations] = useState({
@@ -76,6 +76,7 @@ export function useSalary() {
       setMonthlyStats(data.stats || {});
       if (data.calculations?.base_salary) setSalaryInput(data.calculations.base_salary.toString());
       if (data.calculations?.car_amortization) setAmortizationInput(data.calculations.car_amortization.toString());
+      if (data.calculations?.bonus_percent !== undefined) setBonusInput(data.calculations.bonus_percent.toString());
       setIsDriver(!!data.calculations?.is_driver);
     } catch (error) { console.error(error); }
   };
@@ -173,7 +174,7 @@ const updateBaseSalaryInDb = async (customPayload?: any) => {
     }
 
     return () => subscription.unsubscribe();
-  }, [bonusPercent, userToken,selectedMonth, selectedYear]);
+  }, [userToken,selectedMonth, selectedYear, isDriver]);
 
   const handleCounterChange = (field: string, operation: 'inc' | 'dec', step: number = 1) => {
     setWorkLog((prev: any) => {
@@ -275,7 +276,7 @@ const updateBaseSalaryInDb = async (customPayload?: any) => {
   };
 
   return {
-    bonusPercent, setBonusPercent, userToken,
+    bonusInput, setBonusInput, userToken,
     authEmail, setAuthEmail, authPassword, setAuthPassword, isRegistering, setIsRegistering,
     dbCalculations, historyList, workLog, setWorkLog, handleCounterChange, handleAuthAction, handleLogout, saveDataToServer,userName,salaryInput,setSalaryInput, updateBaseSalaryInDb, cardPaymentInput, saveCardPayment,setCardPaymentInput,selectedMonth,setSelectedMonth,selectedYear,setSelectedYear, authName,setAuthName,isDriver, setIsDriver, amortizationInput, setAmortizationInput,monthlyStats
   };

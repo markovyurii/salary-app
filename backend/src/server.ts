@@ -182,13 +182,14 @@ app.get('/api/salary', requireAuth, async (req: AuthenticatedRequest, res: Respo
 
     const { data: profile } = await supabase
       .from('profiles')
-      .select('base_salary,is_driver, car_amortization')
+      .select('base_salary,is_driver, car_amortization,bonus_percent')
       .eq('id', req.authenticatedUserId)
       .single();
 
     const userBaseSalary = profile ? Number(profile.base_salary) : 19200;
     const isDriver = profile ? Boolean(profile.is_driver) : false;
     const carAmortization = profile ? Number(profile.car_amortization) : 3500;
+    const currentBonusPercent = profile ? Number(profile.bonus_percent) : 0;
     const { data: logs, error: logsError } = await supabase.from('daily_work_log').select('*').gte('date', firstDay).lte('date', lastDay).eq('user_id', req.authenticatedUserId);
     
     //Читаємо ВСІ виплати на картку за цей місяць
@@ -249,7 +250,7 @@ app.get('/api/salary', requireAuth, async (req: AuthenticatedRequest, res: Respo
       (extra_hours * 100) + (duty_hours * 120) +
       (isDriver ? (parking_hours * RATES.PARKING_HOUR_RATE) : (travel_trips * 26));
 
-    const bonusMoney = (userBaseSalary * bonusPercent) / 100;
+    const bonusMoney = (userBaseSalary * currentBonusPercent) / 100;
     const totalSalary = userBaseSalary + bonusMoney + earnedFromWork + (isDriver ? carAmortization : 0); 
     const envelopeRemain = Math.max(0,totalSalary - totalCardPaidUah)
 
@@ -259,6 +260,7 @@ app.get('/api/salary', requireAuth, async (req: AuthenticatedRequest, res: Respo
         is_driver: isDriver,
         car_amortization: carAmortization,
         bonus_percent_applied: `${bonusPercent}%`,
+        bonus_percent: currentBonusPercent,
         bonus_calculated_uah: bonusMoney,
         earned_from_work: earnedFromWork,
         total_salary_prognosis: totalSalary,
@@ -279,10 +281,12 @@ app.get('/api/salary', requireAuth, async (req: AuthenticatedRequest, res: Respo
 
 app.post('/api/profile/update', requireAuth, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { base_salary, is_driver, car_amortization } = req.body;
+    const { base_salary, is_driver, car_amortization , bonus_percent} = req.body;
     const updateData: any = { 
       updated_at: new Date() 
     };
+
+    if (bonus_percent !== undefined) updateData.bonus_percent = Number(bonus_percent);
     if (base_salary !== undefined) {
       if (Number(base_salary) <= 0) {
         return res.status(400).json({ error: 'Ставка має бути більшою за 0!' });

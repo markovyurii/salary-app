@@ -14,8 +14,8 @@ import { SettingsTab } from './components/SettingsTab';
 
 function AppContent() {
   const {
-    bonusPercent,
-    setBonusPercent,
+    bonusInput, 
+    setBonusInput,
     userToken,
     authEmail,
     setAuthEmail,
@@ -113,8 +113,8 @@ function AppContent() {
                     element={
                       <StatsTab
                         calculations={dbCalculations}
-                        bonus={bonusPercent}
-                        setBonus={setBonusPercent}
+                        bonus={bonusInput}
+                        setBonus={setBonusInput}
                         monthlyStats={monthlyStats}
                       />
                     }
