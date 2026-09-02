@@ -7,7 +7,6 @@ import { StatsTab } from './components/StatsTab';
 import { AddTab } from './components/AddTab';
 import {
   HistoryTab,
-  calculatedTotalDayEarned,
   formatLogDate,
 } from './components/HistoryTab';
 import { SettingsTab } from './components/SettingsTab';
