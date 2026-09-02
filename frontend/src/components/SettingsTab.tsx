@@ -1,7 +1,7 @@
 interface SettingsProps {
   salaryInput: string;
   setSalaryInput: (v: string) => void;
-  updateBaseSalaryInDb: (payload?: any) => void; 
+  updateBaseSalaryInDb: (payload?: any) => void;
   cardPaymentInput: string;
   setCardPaymentInput: (v: string) => void;
   saveCardPayment: () => void;
@@ -189,17 +189,33 @@ export function SettingsTab({
           </button>
         </div>
       </div>
-      <div className="space-y-1.5">
-        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide flex items-center gap-1.5">
-          <i className="fa-solid fa-chart-line text-emerald-400"></i> Фінальна премія за місяць (%)
-        </label>
-        <input 
-          type="number" 
-          placeholder="0"
-          value={bonusInput} 
-          onChange={(e) => setBonusInput(e.target.value)} 
-          className="w-full p-2.5 bg-slate-900/50 border border-slate-700 rounded-xl text-white font-bold text-sm focus:outline-none focus:border-emerald-500" 
-        />
+      <div className="bg-slate-800 p-4 rounded-2xl border border-slate-700/50 space-y-3 shadow-md">
+        <div className="space-y-0.5">
+          <h4 className="text-xs font-bold text-emerald-400 uppercase tracking-wide flex items-center gap-2">
+            <i className="fa-solid fa-chart-line text-emerald-400 text-xs"></i>
+            <span>Фінальна премія за місяць</span>
+          </h4>
+          <p className="text-[10px] text-slate-400">
+            Вноситься один раз наприкінці місяця:
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <input
+            type="number"
+            placeholder="0"
+            value={bonusInput}
+            onChange={(e) => setBonusInput(e.target.value)}
+            className="flex-1 p-2.5 bg-slate-900/50 border border-slate-700 rounded-xl text-white font-bold text-sm focus:outline-none focus:border-emerald-500"
+          />
+          <button
+            type="button"
+            onClick={updateBaseSalaryInDb}
+            className="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black px-4 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-95 cursor-pointer flex items-center gap-1.5"
+          >
+            <i className="fa-solid fa-square-check"></i>
+            <span>Зберегти</span>
+          </button>
+        </div>
       </div>
     </div>
   );
