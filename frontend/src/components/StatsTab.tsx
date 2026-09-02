@@ -114,7 +114,7 @@ export function StatsTab({
           <div className="flex justify-between border-b border-slate-700/20 pb-1">
             <span>
               <i className="fa-solid fa-network-wired text-emerald-400 w-4 text-center"></i>{' '}
-              З ТВ муфта на поверсі (75 ₴):
+              Підключення з ТВ на двох (75 грн):
             </span>
             <span className="font-black text-white">
               {monthlyStats?.connect_with_tv_shared || 0} шт
@@ -123,7 +123,7 @@ export function StatsTab({
           <div className="flex justify-between border-b border-slate-700/20 pb-1">
             <span>
               <i className="fa-solid fa-globe text-teal-400 w-4 text-center"></i>{' '}
-              Суто інтернет (100 ₴):
+              Підключення  інтернет (100 грн):
             </span>
             <span className="font-black text-white">
               {monthlyStats?.connect_internet_solo || 0} шт
@@ -132,7 +132,7 @@ export function StatsTab({
           <div className="flex justify-between border-b border-slate-700/20 pb-1">
             <span>
               <i className="fa-solid fa-people-arrows text-teal-500 w-4 text-center"></i>{' '}
-              Суто інтернет муфта (50 ₴):
+              Підключення  інтернет на двох (50 грн):
             </span>
             <span className="font-black text-white">
               {monthlyStats?.connect_internet_shared || 0} шт
@@ -141,7 +141,7 @@ export function StatsTab({
           <div className="flex justify-between border-b border-slate-700/20 pb-1">
             <span>
               <i className="fa-solid fa-tv text-sky-400 w-4 text-center"></i>{' '}
-              Підключення телебачення (100 ₴):
+              Підключення телебачення (100 грн):
             </span>
             <span className="font-black text-white">
               {monthlyStats?.connect_tv_solo || 0} шт
@@ -150,7 +150,7 @@ export function StatsTab({
           <div className="flex justify-between border-b border-slate-700/20 pb-1">
             <span>
               <i className="fa-solid fa-users text-sky-400 w-4 text-center"></i>{' '}
-              Телебачення на двох (50 ₴):
+              Телебачення на двох (50 грн):
             </span>
             <span className="font-black text-white">
               {monthlyStats?.connect_tv_shared || 0} шт
@@ -159,7 +159,7 @@ export function StatsTab({
           <div className="flex justify-between border-b border-slate-700/20 pb-1">
             <span>
               <i className="fa-solid fa-arrows-spin text-amber-400 w-4 text-center"></i>{' '}
-              Переключення (80 ₴):
+              Переключення (80 грн):
             </span>
             <span className="font-black text-white">
               {monthlyStats?.reconnect || 0} шт
@@ -168,7 +168,7 @@ export function StatsTab({
           <div className="flex justify-between border-b border-slate-700/20 pb-1">
             <span>
               <i className="fa-solid fa-building text-purple-400 w-4 text-center"></i>{' '}
-              Підключення ЮО (180 ₴):
+              Підключення ЮО (180 грн):
             </span>
             <span className="font-black text-white">
               {monthlyStats?.connect_uo || 0} шт
@@ -177,7 +177,7 @@ export function StatsTab({
           <div className="flex justify-between border-b border-slate-700/20 pb-1">
             <span>
               <i className="fa-solid fa-user-plus text-fuchsia-400 w-4 text-center"></i>{' '}
-              Приведені клієнти (150 ₴):
+              Приведені клієнти (150 грн):
             </span>
             <span className="font-black text-fuchsia-400">
               {monthlyStats?.brought_clients || 0} шт
@@ -186,7 +186,7 @@ export function StatsTab({
           <div className="flex justify-between border-b border-slate-700/20 pb-1">
             <span>
               <i className="fa-solid fa-bolt text-indigo-400 w-4 text-center"></i>{' '}
-              Допідключення ПОН без муфти (100 ₴):
+              Допідключення ПОН (100 грн):
             </span>
             <span className="font-black text-white">
               {monthlyStats?.addon_pon_solo || 0} шт
@@ -195,7 +195,7 @@ export function StatsTab({
           <div className="flex justify-between border-b border-slate-700/20 pb-1">
             <span>
               <i className="fa-solid fa-circle-nodes text-indigo-500 w-4 text-center"></i>{' '}
-              Допідключення ПОН з муфтою (50 ₴):
+              Допідключення ПОН на двох (50 грн):
             </span>
             <span className="font-black text-white">
               {monthlyStats?.addon_pon_shared || 0} шт
@@ -207,7 +207,7 @@ export function StatsTab({
           <div className="flex justify-between">
             <span>
               <i className="fa-solid fa-clock text-amber-400/80"></i> Додаткові
-              години (100 ₴):
+              години (100 грн/год):
             </span>
             <span className="font-black text-amber-400">
               {monthlyStats?.extra_hours || 0} год
@@ -216,7 +216,7 @@ export function StatsTab({
           <div className="flex justify-between">
             <span>
               <i className="fa-solid fa-user-shield text-amber-400/80"></i>{' '}
-              Чергування (120 ₴):
+              Чергування (120 грн/год):
             </span>
             <span className="font-black text-amber-400">
               {monthlyStats?.duty_hours || 0} год
@@ -230,17 +230,17 @@ export function StatsTab({
               </span>
               <span>
                 {monthlyStats?.parking_hours || 0} год (
-                {monthlyStats?.parking_hours * 15 || 0} ₴)
+                {monthlyStats?.parking_hours * 15 || 0} грн)
               </span>
             </div>
           ) : (
             <div className="flex justify-between col-span-1 sm:col-span-2 text-sky-400 font-bold pt-0.5 border-t border-slate-700/10 mt-1">
               <span>
-                <i className="fa-solid fa-bus"></i> Компенсація проїзду (26 ₴):
+                <i className="fa-solid fa-bus"></i> Компенсація проїзду (26 грн):
               </span>
               <span>
                 {monthlyStats?.travel_trips || 0} поїзд. (
-                {monthlyStats?.travel_trips * 26 || 0} ₴)
+                {monthlyStats?.travel_trips * 26 || 0} грн)
               </span>
             </div>
           )}
