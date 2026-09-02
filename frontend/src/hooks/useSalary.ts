@@ -23,7 +23,6 @@ export interface WorkDay {
 
 export function useSalary() {
   const navigate = useNavigate();
-  const [bonusPercent, setBonusPercent] = useState<number>(0);
   const [userToken, setUserToken] = useState<string | null>(() => localStorage.getItem('salary_app_token'));
   const [salaryInput, setSalaryInput] = useState<string>('');
   const [cardPaymentInput, setCardPaymentInput] = useState<string>('');
