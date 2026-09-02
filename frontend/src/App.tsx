@@ -47,6 +47,7 @@ function AppContent() {
     setIsDriver,
     amortizationInput,
     setAmortizationInput,
+    monthlyStats,
   } = useSalary();
 
   return (
@@ -114,6 +115,7 @@ function AppContent() {
                         calculations={dbCalculations}
                         bonus={bonusPercent}
                         setBonus={setBonusPercent}
+                        monthlyStats={monthlyStats}
                       />
                     }
                   />
@@ -125,6 +127,7 @@ function AppContent() {
                         setLog={setWorkLog}
                         onCounter={handleCounterChange}
                         onSave={saveDataToServer}
+                        isDriver={isDriver}
                       />
                     }
                   />

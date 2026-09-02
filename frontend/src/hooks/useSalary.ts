@@ -173,7 +173,7 @@ const updateBaseSalaryInDb = async (customPayload?: any) => {
   }, [bonusPercent, userToken,selectedMonth, selectedYear]);
 
   const handleCounterChange = (field: string, operation: 'inc' | 'dec', step: number = 1) => {
-    setWorkLog(prev => {
+    setWorkLog((prev: any) => {
       const currentValue = prev[field as keyof typeof prev] as number;
       const newValue = operation === 'inc' ? currentValue + step : Math.max(0, currentValue - step);
       return { ...prev, [field]: newValue };
@@ -274,6 +274,6 @@ const updateBaseSalaryInDb = async (customPayload?: any) => {
   return {
     bonusPercent, setBonusPercent, userToken,
     authEmail, setAuthEmail, authPassword, setAuthPassword, isRegistering, setIsRegistering,
-    dbCalculations, historyList, workLog, setWorkLog, handleCounterChange, handleAuthAction, handleLogout, saveDataToServer,userName,salaryInput,setSalaryInput, updateBaseSalaryInDb, cardPaymentInput, saveCardPayment,setCardPaymentInput,selectedMonth,setSelectedMonth,selectedYear,setSelectedYear, authName,setAuthName,isDriver, setIsDriver, amortizationInput, setAmortizationInput
+    dbCalculations, historyList, workLog, setWorkLog, handleCounterChange, handleAuthAction, handleLogout, saveDataToServer,userName,salaryInput,setSalaryInput, updateBaseSalaryInDb, cardPaymentInput, saveCardPayment,setCardPaymentInput,selectedMonth,setSelectedMonth,selectedYear,setSelectedYear, authName,setAuthName,isDriver, setIsDriver, amortizationInput, setAmortizationInput,monthlyStats
   };
 }
