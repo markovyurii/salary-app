@@ -4,9 +4,10 @@ interface StatsProps {
   calculations: any;
   bonus: number;
   setBonus: (v: number) => void;
+  monthlyStats: any;
 }
 
-export function StatsTab({ calculations, bonus, setBonus }: StatsProps) {
+export function StatsTab({ calculations, bonus, setBonus, monthlyStats }: StatsProps) {
   return (
     <div className="space-y-4 animate-[fadeIn_0.15s_ease-out]">
       {/* 📊 ГОЛОВНЕ ТАБЛО ЗП */}
@@ -71,28 +72,33 @@ export function StatsTab({ calculations, bonus, setBonus }: StatsProps) {
       </div>
 
       {/* 💳 СТАТИСТИКА КАРТКИ ТА ЧАЙОВИХ */}
-      <div className="grid grid-cols-2 gap-3">
-        <div className="bg-slate-800 p-3.5 rounded-2xl border border-slate-700/50 flex flex-col justify-between shadow-md">
-          <p className=" font-bold flex gap-2 items-center text-xs text-slate-400 uppercase tracking-wide">
-            <i className="fa-solid fa-credit-card text-emerald-400"></i>
-            <span>На карту</span>
-          </p>
-          <p className="text-lg font-black text-emerald-400 mt-1">
-            {(calculations?.total_card_paid_uah || 0).toLocaleString('uk-UA')} ₴
-          </p>
+       <div className="bg-slate-800 p-4 rounded-2xl border border-slate-700/50 space-y-2.5 shadow-md">
+        <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-wide flex items-center gap-1.5 border-b border-slate-700/40 pb-2"><i className="fa-solid fa-list-check text-emerald-400"></i><span>Виконані роботи за місяць</span></h3>
+        <div className="grid grid-cols-1 gap-y-2 text-xs text-slate-300 pt-1">
+          <div className="flex justify-between border-b border-slate-700/20 pb-1"><span><i className="fa-solid fa-satellite-dish text-emerald-400 w-4 text-center"></i> Підключення з ТВ (150 ₴):</span><span className="font-black text-white">{monthlyStats?.connect_with_tv || 0} шт</span></div>
+          <div className="flex justify-between border-b border-slate-700/20 pb-1"><span><i className="fa-solid fa-network-wired text-emerald-400 w-4 text-center"></i> З ТВ муфта на поверсі (75 ₴):</span><span className="font-black text-white">{monthlyStats?.connect_with_tv_shared || 0} шт</span></div>
+          <div className="flex justify-between border-b border-slate-700/20 pb-1"><span><i className="fa-solid fa-globe text-teal-400 w-4 text-center"></i> Суто інтернет (100 ₴):</span><span className="font-black text-white">{monthlyStats?.connect_internet_solo || 0} шт</span></div>
+          <div className="flex justify-between border-b border-slate-700/20 pb-1"><span><i className="fa-solid fa-people-arrows text-teal-500 w-4 text-center"></i> Суто інтернет муфта (50 ₴):</span><span className="font-black text-white">{monthlyStats?.connect_internet_shared || 0} шт</span></div>
+          <div className="flex justify-between border-b border-slate-700/20 pb-1"><span><i className="fa-solid fa-tv text-sky-400 w-4 text-center"></i> Підключення телебачення (100 ₴):</span><span className="font-black text-white">{monthlyStats?.connect_tv_solo || 0} шт</span></div>
+          <div className="flex justify-between border-b border-slate-700/20 pb-1"><span><i className="fa-solid fa-users text-sky-400 w-4 text-center"></i> Телебачення на двох (50 ₴):</span><span className="font-black text-white">{monthlyStats?.connect_tv_shared || 0} шт</span></div>
+          <div className="flex justify-between border-b border-slate-700/20 pb-1"><span><i className="fa-solid fa-arrows-spin text-amber-400 w-4 text-center"></i> Переключення (80 ₴):</span><span className="font-black text-white">{monthlyStats?.reconnect || 0} шт</span></div>
+          <div className="flex justify-between border-b border-slate-700/20 pb-1"><span><i className="fa-solid fa-building text-purple-400 w-4 text-center"></i> Підключення ЮО (180 ₴):</span><span className="font-black text-white">{monthlyStats?.connect_uo || 0} шт</span></div>
+          <div className="flex justify-between border-b border-slate-700/20 pb-1"><span><i className="fa-solid fa-user-plus text-fuchsia-400 w-4 text-center"></i> Приведені клієнти (150 ₴):</span><span className="font-black text-fuchsia-400">{monthlyStats?.brought_clients || 0} шт</span></div>
+          <div className="flex justify-between border-b border-slate-700/20 pb-1"><span><i className="fa-solid fa-bolt text-indigo-400 w-4 text-center"></i> Допідключення ПОН без муфти (100 ₴):</span><span className="font-black text-white">{monthlyStats?.addon_pon_solo || 0} шт</span></div>
+          <div className="flex justify-between border-b border-slate-700/20 pb-1"><span><i className="fa-solid fa-circle-nodes text-indigo-500 w-4 text-center"></i> Допідключення ПОН з муфтою (50 ₴):</span><span className="font-black text-white">{monthlyStats?.addon_pon_shared || 0} шт</span></div>
         </div>
-        <div className="bg-slate-800 p-3.5 rounded-2xl border border-slate-700/50 flex flex-col justify-between shadow-md">
-          <p>
-            <span className="text-xs font-bold text-amber-400 uppercase tracking-wide flex items-center gap-1.5">
-              <i className="fa-solid fa-piggy-bank text-amber-400"></i>
-              на чай
-            </span>
-          </p>
-          <p className="text-lg font-black text-amber-400 mt-1">
-            +{(calculations?.total_tips_uah || 0).toLocaleString('uk-UA')} ₴
-          </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5 text-xs text-slate-400 pt-2 border-t border-slate-700/40">
+          <div className="flex justify-between"><span><i className="fa-solid fa-clock text-amber-400/80"></i> Додаткові години (100 ₴):</span><span className="font-black text-amber-400">{monthlyStats?.extra_hours || 0} год</span></div>
+          <div className="flex justify-between"><span><i className="fa-solid fa-user-shield text-amber-400/80"></i> Чергування (120 ₴):</span><span className="font-black text-amber-400">{monthlyStats?.duty_hours || 0} год</span></div>
+          {calculations?.is_driver ? (
+            <div className="flex justify-between col-span-1 sm:col-span-2 text-emerald-400 font-bold pt-0.5 border-t border-slate-700/10 mt-1"><span><i className="fa-solid fa-square-parking"></i> Виплата за парковку:</span><span>{monthlyStats?.parking_hours || 0} год ({(monthlyStats?.parking_hours * 15 || 0)} ₴)</span></div>
+          ) : (
+            <div className="flex justify-between col-span-1 sm:col-span-2 text-sky-400 font-bold pt-0.5 border-t border-slate-700/10 mt-1"><span><i className="fa-solid fa-bus"></i> Компенсація проїзду (26 ₴):</span><span>{monthlyStats?.travel_trips || 0} поїзд. ({(monthlyStats?.travel_trips * 26 || 0)} ₴)</span></div>
+          )}
         </div>
       </div>
+
 
       {/* 📊 МОДЕЛЮВАННЯ ПРЕМІЇ */}
       <div className="bg-slate-800 p-4 rounded-2xl border border-slate-700/50 space-y-2.5 shadow-md">

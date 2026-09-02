@@ -50,10 +50,12 @@ export function useSalary() {
   });
 
   const [historyList, setHistoryList] = useState<WorkDay[]>([]);
-  const [workLog, setWorkLog] = useState({
-    connect_tv: 0, connect_no_tv: 0, addon_pon: 0, addon_eth: 0,
-    reconnect: 0, extra_hours: 0, duty_hours: 0, brought_clients: 0, connect_uo: 0,
-    tips: 0, date: new Date().toLocaleDateString('en-CA')
+  const [workLog, setWorkLog] = useState<any>({
+    connect_with_tv: 0, connect_with_tv_shared: 0, connect_internet_solo: 0, connect_internet_shared: 0,
+    connect_tv_solo: 0, connect_tv_shared: 0, reconnect: 0, connect_uo: 0, brought_clients: 0,
+    addon_pon_solo: 0, addon_pon_shared: 0, extra_hours: 0, duty_hours: 0,
+    parking_hours: 0, travel_compensation: 0, tips: 0,
+    date: new Date().toLocaleDateString('en-CA')
   });
 
   const fetchSalaryFromBackend = async () => {
@@ -240,7 +242,13 @@ const updateBaseSalaryInDb = async (customPayload?: any) => {
       alert(`🎉 Дані успішно збережено!`);
       fetchSalaryFromBackend();
       fetchHistoryFromBackend();
-      setWorkLog(prev => ({ ...prev, connect_tv: 0, connect_no_tv: 0, addon_pon: 0, addon_eth: 0, reconnect: 0, extra_hours: 0, duty_hours: 0, brought_clients: 0, connect_uo: 0, tips: 0 }));
+      setWorkLog((prev: any) => ({
+          ...prev,
+          connect_with_tv: 0, connect_with_tv_shared: 0, connect_internet_solo: 0, connect_internet_shared: 0,
+          connect_tv_solo: 0, connect_tv_shared: 0, reconnect: 0, connect_uo: 0, brought_clients: 0,
+          addon_pon_solo: 0, addon_pon_shared: 0, extra_hours: 0, duty_hours: 0,
+          parking_hours: 0, travel_compensation: 0, tips: 0
+        }));
       navigate('/history')
     } catch (error: any) { alert(`❌ Помилка: ${error.message || error}`); }
   };
