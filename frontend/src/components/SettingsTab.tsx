@@ -209,7 +209,7 @@ export function SettingsTab({
           />
           <button
             type="button"
-            onClick={updateBaseSalaryInDb}
+            onClick={handleSaveProfile}
             className="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black px-4 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-95 cursor-pointer flex items-center gap-1.5"
           >
             <i className="fa-solid fa-square-check"></i>
