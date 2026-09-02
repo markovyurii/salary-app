@@ -41,6 +41,8 @@ export function useSalary() {
   const [isDriver, setIsDriver] = useState<boolean>(false);
   const [amortizationInput, setAmortizationInput] = useState<string>('3500');
 
+  const [monthlyStats, setMonthlyStats] = useState<any>({});
+
 
 
   const [dbCalculations, setDbCalculations] = useState({
@@ -71,6 +73,7 @@ export function useSalary() {
       if (!response.ok) throw new Error('Failed');
       const data = await response.json();
       setDbCalculations(data.calculations);
+      setMonthlyStats(data.stats || {});
       if (data.calculations?.base_salary) setSalaryInput(data.calculations.base_salary.toString());
       if (data.calculations?.car_amortization) setAmortizationInput(data.calculations.car_amortization.toString());
       setIsDriver(!!data.calculations?.is_driver);
