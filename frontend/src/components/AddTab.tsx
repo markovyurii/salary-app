@@ -8,16 +8,16 @@ interface AddProps {
 export function AddTab({ log, setLog, onCounter, onSave, isDriver }: AddProps) {
   const fields = [
     { label: 'Підключення з ТВ (150 грн)', f: 'connect_with_tv', icon: <i className="fa-solid fa-satellite-dish text-emerald-400 text-xs w-5 text-center"></i> },
-    { label: 'Підключення з ТВ муфта на поверсі (75 грн)', f: 'connect_with_tv_shared', icon: <i className="fa-solid fa-network-wired text-emerald-400 text-xs w-5 text-center"></i> },
-    { label: 'Підключення суто інтернет (100 грн)', f: 'connect_internet_solo', icon: <i className="fa-solid fa-globe text-teal-400 text-xs w-5 text-center"></i> },
-    { label: 'Суто інтернет на поверсі муфта (50 грн)', f: 'connect_internet_shared', icon: <i className="fa-solid fa-people-arrows text-teal-500 text-xs w-5 text-center"></i> },
-    { label: 'Підключення телебачення соло (100_грн)', f: 'connect_tv_solo', icon: <i className="fa-solid fa-tv text-sky-400 text-xs w-5 text-center"></i> },
+    { label: 'Підключення з ТВ на двох (75 грн)', f: 'connect_with_tv_shared', icon: <i className="fa-solid fa-network-wired text-emerald-400 text-xs w-5 text-center"></i> },
+    { label: 'Підключення  інтернет (100 грн)', f: 'connect_internet_solo', icon: <i className="fa-solid fa-globe text-teal-400 text-xs w-5 text-center"></i> },
+    { label: 'Підключення  інтернет на двох (50 грн)', f: 'connect_internet_shared', icon: <i className="fa-solid fa-people-arrows text-teal-500 text-xs w-5 text-center"></i> },
+    { label: 'Підключення телебачення (100_грн)', f: 'connect_tv_solo', icon: <i className="fa-solid fa-tv text-sky-400 text-xs w-5 text-center"></i> },
     { label: 'Підключення телебачення на двох (50 грн)', f: 'connect_tv_shared', icon: <i className="fa-solid fa-users text-sky-400 text-xs w-5 text-center"></i> },
     { label: 'Переключення (80 грн)', f: 'reconnect', icon: <i className="fa-solid fa-arrows-spin text-amber-400 text-xs w-5 text-center"></i> },
     { label: 'Підключення ЮО (180 грн)', f: 'connect_uo', icon: <i className="fa-solid fa-building text-purple-400 text-xs w-5 text-center"></i> },
     { label: 'Приведені клієнти (150 грн)', f: 'brought_clients', icon: <i className="fa-solid fa-user-plus text-fuchsia-400 text-xs w-5 text-center"></i> },
-    { label: 'Допідключення ПОН без муфти (100 грн)', f: 'addon_pon_solo', icon: <i className="fa-solid fa-bolt text-indigo-400 text-xs w-5 text-center"></i> },
-    { label: 'Допідключення ПОН з муфтою (50 грн)', f: 'addon_pon_shared', icon: <i className="fa-solid fa-circle-nodes text-indigo-500 text-xs w-5 text-center"></i> },
+    { label: 'Допідключення ПОН (100 грн)', f: 'addon_pon_solo', icon: <i className="fa-solid fa-bolt text-indigo-400 text-xs w-5 text-center"></i> },
+    { label: 'Допідключення ПОН на двох (50 грн)', f: 'addon_pon_shared', icon: <i className="fa-solid fa-circle-nodes text-indigo-500 text-xs w-5 text-center"></i> },
     { label: 'Додаткові години (100 грн/год)', f: 'extra_hours', h: true, icon: <i className="fa-solid fa-clock text-slate-400 text-xs w-5 text-center"></i> },
     { label: 'Чергування (120 грн/год)', f: 'duty_hours', h: true, icon: <i className="fa-solid fa-user-shield text-slate-400 text-xs w-5 text-center"></i> },
   ];
