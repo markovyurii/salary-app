@@ -203,7 +203,7 @@ export function StatsTab({
           </div>
         </div>
 
-        <div className="flex flex-col text-xs text-slate-400 pt-2 border-t border-slate-700/40">
+        <div className="flex flex-col gap-2 text-xs text-slate-400 pt-2 border-t border-slate-700/40">
           <div className="flex justify-between">
             <span>
               <i className="fa-solid fa-clock text-amber-400/80"></i> Додаткові
