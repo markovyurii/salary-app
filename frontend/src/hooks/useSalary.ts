@@ -171,7 +171,7 @@ const updateBaseSalaryInDb = async (customPayload?: any) => {
     }
 
     return () => subscription.unsubscribe();
-  }, [userToken,selectedMonth, selectedYear, isDriver]);
+  }, [userToken,selectedMonth, selectedYear]);
 
   const handleCounterChange = (field: string, operation: 'inc' | 'dec', step: number = 1) => {
     setWorkLog((prev: any) => {
