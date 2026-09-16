@@ -300,7 +300,7 @@ export function useSalary() {
   const saveDataToServer = async () => {
     try {
       const response = await fetch(
-        `https://salary-app-gray-five.vercel.appapi/work-log`,
+        `https://salary-app-gray-five.vercel.app/api/work-log`,
         {
           method: 'POST',
           headers: {
