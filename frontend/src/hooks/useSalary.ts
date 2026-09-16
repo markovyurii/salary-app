@@ -94,7 +94,7 @@ export function useSalary() {
     if (!userToken) return;
     try {
       const response = await fetch(
-        `salary-app-gray-five.vercel.app/api/salary?month=${selectedMonth}&year=${selectedYear}`,
+        `https://salary-app-gray-five.vercel.app/api/salary?month=${selectedMonth}&year=${selectedYear}`,
         {
           headers: { Authorization: `Bearer ${userToken}` },
         },
@@ -123,7 +123,7 @@ export function useSalary() {
     if (!userToken) return;
     try {
       const response = await fetch(
-        `salary-app-gray-five.vercel.app/api/work-log/?month=${selectedMonth}&year=${selectedYear}`,
+        `https://salary-app-gray-five.vercel.app/api/work-log/?month=${selectedMonth}&year=${selectedYear}`,
         {
           headers: { Authorization: `Bearer ${userToken}` },
         },
@@ -183,7 +183,7 @@ export function useSalary() {
     };
     try {
       const response = await fetch(
-        `salary-app-gray-five.vercel.app/api/profile/update`,
+        `https://salary-app-gray-five.vercel.app/api/profile/update`,
         {
           method: 'POST',
           headers: {
@@ -300,7 +300,7 @@ export function useSalary() {
   const saveDataToServer = async () => {
     try {
       const response = await fetch(
-        `salary-app-gray-five.vercel.appapi/work-log`,
+        `https://salary-app-gray-five.vercel.appapi/work-log`,
         {
           method: 'POST',
           headers: {
@@ -348,7 +348,7 @@ export function useSalary() {
       return alert('❌ Введіть коректну суму виплати!');
     try {
       const response = await fetch(
-        'https://salary-backend-woq5.onrender.com/api/card-payment',
+        'https://salary-app-gray-five.vercel.app/api/card-payment',
         {
           method: 'POST',
           headers: {
